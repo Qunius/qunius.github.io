@@ -89,3 +89,15 @@ button{cursor:pointer}button:focus-visible,summary:focus-visible{outline:2px sol
  #photo-viewer{padding:12px 16px max(12px,env(safe-area-inset-bottom))}#photo-viewer[open]{grid-template-rows:48px minmax(0,1fr) 64px;gap:8px}#viewer-caption{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.photo-open img,.window-open span{transition:none}}
+
+/* Return navigation appears again as soon as the reader pauses. */
+:root{--journal-header-height:76px}
+body>header{position:fixed;z-index:12;height:var(--journal-header-height);padding:0 3vw;border-bottom:1px solid transparent;transform:translateY(0);transition:transform 200ms cubic-bezier(.2,.7,.2,1);text-shadow:none}
+body>header>a{min-height:44px;display:inline-flex;align-items:center}
+.journal-scrolled body>header{background:#090a0bf5;border-bottom-color:#242526}
+.journal-header-hidden body>header:not(:focus-within){transform:translateY(-100%);pointer-events:none}
+.journal-nav{top:var(--journal-header-height);transition:top 200ms cubic-bezier(.2,.7,.2,1)}
+.journal-header-hidden .journal-nav{top:0}
+.intro[id]{scroll-margin-top:calc(var(--journal-header-height) + 85px)}
+@media(max-width:650px){:root{--journal-header-height:68px}body>header{padding-inline:6vw}}
+@media(prefers-reduced-motion:reduce){body>header,.journal-nav{transition:none}}
