@@ -43,48 +43,38 @@ viewer.addEventListener('close', () => {
   opener?.focus({ preventScroll: true });
 });
 
-const chapters = [...document.querySelectorAll('.intro[id]')];
-const links = [...document.querySelectorAll('.journal-nav a')];
 const journalRoot = document.documentElement;
 const journalHeader = document.querySelector('body > header');
 let lastScrollY = Math.max(0, scrollY);
-let downDistance = 0;
+let scrollDistance = 0;
 let menuIdleTimer;
 let scheduled = false;
 function revealJournalMenu() {
   clearTimeout(menuIdleTimer);
+  scrollDistance = 0;
   journalRoot.classList.remove('journal-header-hidden');
 }
 function updateJournalMenu() {
   const y = Math.max(0, scrollY);
   const delta = y - lastScrollY;
-  downDistance = delta > 0 ? downDistance + delta : 0;
+  scrollDistance += Math.abs(delta);
   journalRoot.classList.toggle('journal-scrolled', y > 8);
-  if (y < 96 || delta < 0 || journalHeader.contains(document.activeElement) || viewer.open) {
+  if (y < 96 || journalHeader.contains(document.activeElement) || viewer.open) {
     revealJournalMenu();
-  } else if (downDistance > 8) {
+  } else if (scrollDistance > 8) {
     journalRoot.classList.add('journal-header-hidden');
   }
   lastScrollY = y;
-}
-function updateChapter() {
-  const active = chapters.filter(chapter => chapter.getBoundingClientRect().top <= innerHeight * .35).at(-1);
-  links.forEach(link => {
-    if (link.hash === `#${active?.id}`) link.setAttribute('aria-current', 'location');
-    else link.removeAttribute('aria-current');
-  });
-  updateJournalMenu();
   scheduled = false;
 }
 addEventListener('scroll', () => {
   clearTimeout(menuIdleTimer);
-  menuIdleTimer = setTimeout(revealJournalMenu, 200);
-  if (!scheduled) { scheduled = true; requestAnimationFrame(updateChapter); }
+  menuIdleTimer = setTimeout(revealJournalMenu, 1000);
+  if (!scheduled) { scheduled = true; requestAnimationFrame(updateJournalMenu); }
 }, { passive: true });
 journalHeader.addEventListener('focusin', revealJournalMenu);
 addEventListener('pageshow', () => {
   lastScrollY = Math.max(0, scrollY);
-  downDistance = 0;
   revealJournalMenu();
 });
-updateChapter();
+updateJournalMenu();
