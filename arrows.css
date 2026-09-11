@@ -1,0 +1,5 @@
+.ui-arrow{display:inline-block;width:1em;height:1em;vertical-align:-.12em;overflow:visible;flex-shrink:0;pointer-events:none}
+.ui-arrow--right{transform:rotate(45deg)}
+.ui-arrow--down{transform:rotate(135deg)}
+.ui-arrow--left{transform:rotate(225deg)}
+.ui-arrow--up{transform:rotate(-45deg)}
