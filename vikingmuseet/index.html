@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-x5SdyuPRTDk9Ea+M65hfgDmSB+TvoAwTyUY1aHFeAbA='; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"><meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ece9e1">
+  <meta name="description" content="Ett interaktivt koncept för The Viking Museum: gå in i vikingatiden, möt människorna och bygg din egen viking.">
+  <title>The Viking Museum — Gå genom glaset</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css?v=2026082928">
+</head>
+<body>
+  <a class="skip-link" href="#main">Hoppa till innehållet</a>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="The Viking Museum, startsida">
+      <svg class="brand-mark" viewBox="0 0 38 46" aria-hidden="true"><path d="M4 3l15 38L34 3M11 3l8 20 8-20"/></svg>
+      <span><strong>The Viking Museum</strong><small>Stockholm</small></span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-label="Visa eller dölj huvudmenyn" aria-expanded="false" aria-controls="primary-navigation">
+      <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+    </button>
+
+    <nav id="primary-navigation" class="primary-nav" aria-label="Huvudmeny">
+      <a href="#upplevelsen">Upplevelsen</a>
+      <a href="#museet">Museet</a>
+      <a href="builder.html">Skapa din viking</a>
+      <a href="#besok">Besök</a>
+    </nav>
+
+    <div class="header-actions">
+      <div class="language-picker">
+        <button class="language-button" type="button" aria-label="Välj språk. Nuvarande språk: svenska" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+          <span>SV</span>
+        </button>
+        <div id="language-menu" class="language-menu" role="group" aria-label="Tillgängliga språk" hidden>
+          <button type="button" class="is-current" aria-current="true">Svenska <span>Valt</span></button>
+          <button type="button" disabled>Engelska <span>Kommer senare</span></button>
+        </div>
+      </div>
+      <a class="button button-dark ticket-button" href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Köp biljetter<span class="sr-only"> (öppnas i ny flik)</span></a>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section id="top" class="portal-hero" aria-labelledby="hero-title">
+      <div class="portal-sticky">
+        <img class="portal-image" src="assets/museum-portal-hero.png" alt="En modern ljus museisal med ett varmt rekonstruerat långhus bakom glas">
+        <span id="upplevelsen" class="room-anchor" aria-hidden="true"></span>
+        <div class="portal-room-layer" data-room role="region" aria-labelledby="room-title" aria-describedby="room-instructions room-keyboard-help">
+          <img src="assets/longhouse-hotspots-matched.png" data-room-image-fallback alt="Ett varmt rekonstruerat långhus med människor och föremål att utforska">
+          <div class="room-vignette" aria-hidden="true"></div>
+          <div class="room-chapter-heading">
+            <h2 id="room-title">Fyra spår.<br>En större bild.</h2>
+            <p id="room-instructions">Välj ett spår i rummet.</p>
+          </div>
+          <p id="room-keyboard-help" class="sr-only">Välj en punkt med mus, beröring eller tangentbord. Tryck Escape för att stänga ett öppet spår.</p>
+          <button class="hotspot hotspot-helmet" type="button" data-hotspot="helmet" aria-label="Utforska hjälmen" aria-controls="room-story" aria-expanded="false"><span>Hjälmen</span></button>
+          <button class="hotspot hotspot-clothes" type="button" data-hotspot="clothes" aria-label="Utforska kläderna" aria-controls="room-story" aria-expanded="false"><span>Kläderna</span></button>
+          <button class="hotspot hotspot-people" type="button" data-hotspot="people" aria-label="Utforska människorna" aria-controls="room-story" aria-expanded="false"><span>Människorna</span></button>
+          <button class="hotspot hotspot-faith" type="button" data-hotspot="faith" aria-label="Utforska tron" aria-controls="room-story" aria-expanded="false"><span>Tron</span></button>
+          <aside id="room-story" class="room-story" role="region" aria-live="polite" aria-atomic="true" aria-labelledby="room-story-title" aria-describedby="room-story-copy" hidden>
+            <div class="story-index">01 / 04</div>
+            <h3 id="room-story-title">En hjälm utan horn</h3>
+            <p id="room-story-copy">Horn hör hemma i vår bild av vikingen. De bevarade stridshjälmarna från tiden visar något annat.</p>
+            <button class="text-button" type="button" data-story-more>Se spåret bakom bilden <span aria-hidden="true">↗</span></button>
+          </aside>
+        </div>
+        <div class="portal-shade" aria-hidden="true"></div>
+        <div class="portal-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="hero-copy">
+          <p class="eyebrow">The Viking Museum · Stockholm</p>
+          <h1 id="hero-title">Gå genom glaset.</h1>
+          <p>Vikingatiden finns inte kvar. Men spåren gör det.<br>Kom närmare människorna bakom bilden.</p>
+          <a class="scroll-cue" href="#upplevelsen"><span>Skrolla för att gå in</span><svg viewBox="0 0 20 24" aria-hidden="true"><path d="M10 2v18M3 13l7 7 7-7"/></svg></a>
+        </div>
+        <div class="hero-stage-label" aria-hidden="true"><span>Nutid</span><span>ca 900 e.Kr.</span></div>
+      </div>
+    </section>
+
+    <section id="museet" class="museum-section paper-section" aria-labelledby="museum-title">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">The Viking Museum</p>
+          <h2 id="museum-title">En resa genom<br>vikingatidens många liv.</h2>
+        </div>
+        <p>Här möter du inte en enda färdig berättelse. Föremål, rekonstruktioner och röster visar hur livet kunde ta form — hemma, på resan och i mötet med andra.</p>
+      </div>
+
+      <div class="experience-grid">
+        <article class="experience-card reveal">
+          <div class="card-image card-image-object"><img src="assets/museum-helmet-display.png" alt="En hornlös järnhjälm i en modern glasmonter"></div>
+          <div class="card-body"><span aria-hidden="true">01</span><h3>Föremålen</h3><p>Kom nära spåren som finns kvar: metall, trä, textil och berättelserna vi bygger omkring dem.</p><a href="#upplevelsen">Se vad de berättar <span aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="experience-card reveal">
+          <div class="card-image card-image-ride"><img src="assets/ragnfrids-saga-journey.png" alt="En varm museal gestaltning av en resa med vikingaskepp"></div>
+          <div class="card-body"><span aria-hidden="true">02</span><h3>Ragnfrids saga</h3><p>En elva minuter lång resa från gården och ut i den värld som vikingatidens människor färdades genom.</p><a href="https://thevikingmuseum.com/utstallningen/ragnfrids-saga/" target="_blank" rel="noopener">Upptäck åkturen <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></div>
+        </article>
+        <article class="experience-card reveal">
+          <div class="card-image card-image-guide"><img src="assets/guided-family-visit.png" alt="En guide möter en barnfamilj och internationella besökare i museet"></div>
+          <div class="card-body"><span aria-hidden="true">03</span><h3>Visningar och audioguide</h3><p>Möt vikingatiden genom guider, gestaltade miljöer och en kostnadsfri audioguide på tio språk.</p><a href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Planera ditt besök <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="bygg" class="home-builder-cta" aria-labelledby="home-builder-title">
+      <img class="home-builder-bg" src="assets/longhouse-zoom-continuation.png" alt="">
+      <div class="home-builder-shade" aria-hidden="true"></div>
+      <div class="home-builder-frame" aria-hidden="true">
+        <img class="home-builder-corner corner-tl" src="assets/builder-glass-corner.png" alt="">
+        <img class="home-builder-corner corner-tr" src="assets/builder-glass-corner.png" alt="">
+        <img class="home-builder-corner corner-br" src="assets/builder-glass-corner.png" alt="">
+        <img class="home-builder-corner corner-bl" src="assets/builder-glass-corner.png" alt="">
+      </div>
+      <div class="home-builder-copy reveal">
+        <p class="eyebrow">Interaktiv upplevelse</p>
+        <h2 id="home-builder-title">Skapa din<br>egen viking</h2>
+        <p>Börja med bilden du redan har. Genom tio val växer en viking fram som du kan skriva ut, vika och ta med hem.</p>
+        <a class="home-builder-button" href="builder.html"><span>Börja bygga</span><b aria-hidden="true">→</b></a>
+        <div class="home-builder-meta"><span>10 val</span><i aria-hidden="true">·</i><span>cirka 4 minuter</span></div>
+      </div>
+      <div class="home-builder-figure reveal">
+        <img src="assets/folded-paper-viking-cutout.png" alt="En färdigvikt pappersfigur i vikingatida kläder">
+        <img class="home-builder-pedestal" src="assets/glass-museum-pedestal-v3.png" alt="">
+      </div>
+    </section>
+
+    <section id="besok" class="visit-section paper-section" aria-labelledby="visit-title">
+      <div class="visit-heading reveal"><div><p class="eyebrow">Djurgården · Stockholm</p><h2 id="visit-title">Fortsätt resan<br>på museet.</h2></div><a class="button button-dark" href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Planera besöket <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></div>
+      <div class="visit-grid reveal">
+        <article><span aria-hidden="true">01</span><h3>Öppettider</h3><p>Vardagar 11–17 · helger 10–17. Sommar, lov och helgdagar kan ha andra tider.</p><a href="https://thevikingmuseum.com/oppettider/" target="_blank" rel="noopener">Se avvikande tider <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></article>
+        <article><span aria-hidden="true">02</span><h3>Guidade visningar</h3><p>Möt museets guider och låt föremålen öppna fler berättelser.</p><a href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Se dagens turer <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></article>
+        <article><span aria-hidden="true">03</span><h3>För hela familjen</h3><p>Utforska utställningen tillsammans. Ragnfrids saga rekommenderas från 7 år och audioguiden finns på tio språk.</p><a href="https://thevikingmuseum.com/utstallningen/ragnfrids-saga/" target="_blank" rel="noopener">Om Ragnfrids saga <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand"><svg class="brand-mark" viewBox="0 0 38 46" aria-hidden="true"><path d="M4 3l15 38L34 3M11 3l8 20 8-20"/></svg><div><strong>The Viking Museum</strong><span>Djurgårdsvägen 48 · Stockholm</span></div></div>
+    <nav class="footer-links" aria-label="Sidfot"><div><strong>Upptäck</strong><a href="#upplevelsen">Upplevelsen</a><a href="builder.html">Skapa din viking</a><a href="#museet">Om museet</a></div><div><strong>Besök</strong><a href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Biljetter <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a><a href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Hitta hit <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a><a href="https://thevikingmuseum.com/besok-oss/" target="_blank" rel="noopener">Tillgänglighet <span aria-hidden="true">↗</span><span class="sr-only"> (öppnas i ny flik)</span></a></div></nav>
+    <div class="footer-language"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Svenska</span></div>
+    <p class="footer-note">Konceptsida för ett gruppcase i Etik i Design. Ett utforskande av hur form och pedagogik kan väcka nyfikenhet och öppna fler perspektiv på historien.</p>
+  </footer>
+
+  <section id="print-sheet" class="print-sheet" aria-hidden="true">
+    <header><p>The Viking Museum</p><h1>Min viking</h1><span>Klipp längs den heldragna linjen. Vik längs den streckade.</span></header>
+    <div class="paper-net">
+      <div class="net-head"><span class="net-face">·‿·</span><i class="tab top"></i><i class="tab left"></i><i class="tab right"></i></div>
+      <div class="net-arm left"><i></i></div><div class="net-body"><strong data-print-symbol>⌁</strong><span data-print-clothes>Vardagskläder</span></div><div class="net-arm right"><i></i></div>
+      <div class="net-leg left"></div><div class="net-leg right"></div>
+    </div>
+    <div class="print-choices" data-print-choices></div>
+    <footer>Ta med din viking — och fortsätt upptäcka fler spår.</footer>
+  </section>
+
+  <script src="app.js?v=2026082923"></script>
+</body>
+</html>
