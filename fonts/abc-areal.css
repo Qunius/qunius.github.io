@@ -1,0 +1,8 @@
+/* ABC Areal variable font: preserves the portfolio's 400–600 weights. */
+@font-face {
+  font-family: "ABC Areal";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/ABCArealVariable.woff2") format("woff2");
+}
