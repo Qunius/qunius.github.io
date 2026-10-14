@@ -1,0 +1,34 @@
+/* ABC Areal spacing corrections. Loaded after the page stylesheets. */
+.wordmark,
+header > a[aria-label="Till Pavel Lis portfolio"] {
+  letter-spacing: -.025em;
+}
+
+.hero-intro p {
+  letter-spacing: 0;
+}
+
+.section-intro > h2 {
+  letter-spacing: -.025em;
+}
+
+.contact-heading h2,
+.contact-stack {
+  letter-spacing: -.025em;
+  line-height: 1.04;
+}
+
+.case-panel-content .editorial-case :is(.editorial-prose, .editorial-end) h4 {
+  letter-spacing: -.01em;
+}
+
+.window-label h1 {
+  letter-spacing: -.04em;
+}
+
+@media (max-width: 760px) {
+  /* Keep the complete address on one line with the wider letter spacing. */
+  .contact-link {
+    font-size: 10.3vw;
+  }
+}
