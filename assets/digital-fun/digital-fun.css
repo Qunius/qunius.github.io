@@ -29,6 +29,15 @@ h1, h2, p { margin: 0; }
 .intro { display: grid; grid-template-columns: 2fr 1fr; align-items: end; gap: 32px; padding: 54px 0 48px; }
 h1 { font-size: clamp(64px, 9.2vw, 160px); font-weight: 550; letter-spacing: -.04em; line-height: .97; }
 .intro p { font-size: clamp(15px, 1.25vw, 19px); line-height: 1.55; padding-bottom: 3px; }
+/* The music entry uses the portfolio's quiet label and action typography. */
+.micro { font: 11px/1.6 SFMono-Regular, Consolas, "Liberation Mono", monospace; letter-spacing: .065em; text-transform: uppercase; }
+.music-entry { border-block: 1px solid var(--rule); margin-bottom: 32px; }
+.music-link { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 2fr) auto; align-items: center; gap: 20px 35px; padding: 28px 0; }
+.music-link .content-kind, .music-action { color: var(--muted); }
+.music-link h2 { font-size: 27px; letter-spacing: -.04em; }
+.music-action { display: inline-flex; align-items: center; gap: 8px; }
+.music-action svg { width: 16px; height: 16px; }
+.music-link:hover h2, .music-link:focus-visible h2 { color: var(--accent); }
 .experiment { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); background: var(--stage); color: #f1f0ea; }
 .fire-stage { min-width: 0; height: clamp(490px, 48vw, 740px); position: relative; }
 #fire { display: block; width: 100%; height: 100%; background: transparent; cursor: crosshair; touch-action: none; }
@@ -55,6 +64,9 @@ footer a { text-decoration: underline; text-underline-offset: 4px; }
 .sr-only, .skip-link:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip-link:focus { position: fixed; top: 12px; left: 12px; z-index: 5; background: var(--paper); padding: 16px; }
 @media (max-width: 800px) {
+  .music-link { grid-template-columns: minmax(0, 1fr) auto; gap: 20px; padding: 24px 0; }
+  .music-link .content-kind { grid-column: 1 / -1; font-size: 10px; }
+  .music-link h2 { font-size: 25px; }
   .intro { grid-template-columns: 1fr; gap: 24px; padding: 42px 0 32px; }
   h1 { font-size: clamp(62px, 13.2vw, 104px); }
   .intro p { font-size: 16px; }
