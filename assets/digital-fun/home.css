@@ -1,22 +1,25 @@
-/* A new experiment entry alongside the existing music and photography. */
+/* Share the music/photo heading columns and the photo heading's text rhythm. */
 .digital-fun-row {
   display: grid;
-  grid-template-columns: 1fr 1.4fr .6fr;
+  grid-template-columns: var(--section-rail) minmax(0, 1fr) auto;
   align-items: center;
-  gap: 35px;
-  padding: 32px 0;
+  gap: 14px var(--section-gap);
+  padding: 42px 0 28px;
   border-bottom: 1px solid #b9bab2;
 }
-.digital-fun-row > .content-kind { color: var(--muted); }
-.digital-fun-copy { display: grid; gap: 10px; }
-.digital-fun-summary { font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 34ch; }
-.digital-fun-action { justify-self: end; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; }
+.digital-fun-row > .content-kind { color: var(--muted); grid-column: 1; grid-row: 1; }
+.digital-fun-copy { display: contents; }
+.digital-fun-copy > .music-title { grid-column: 2; grid-row: 1; }
+.digital-fun-summary { grid-column: 2 / -1; grid-row: 2; font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 560px; }
+.digital-fun-action { grid-column: 3; grid-row: 1; justify-self: end; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; }
 .digital-fun-row:hover .hover-line { color: var(--accent); }
 .masthead nav a { white-space: nowrap; }
 @media (max-width: 760px) {
-  .digital-fun-row { grid-template-columns: 1fr auto; gap: 16px; }
-  .digital-fun-row > .content-kind { grid-column: 1 / -1; }
-  .digital-fun-row .music-title { font-size: 27px; }
+  .digital-fun-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 20px; padding-top: 30px; }
+  .digital-fun-row > .content-kind { grid-column: 1 / -1; grid-row: 1; }
+  .digital-fun-copy > .music-title { grid-column: 1; grid-row: 2; }
+  .digital-fun-summary { grid-column: 1 / -1; grid-row: 3; margin-top: -6px; }
+  .digital-fun-action { grid-column: 2; grid-row: 2; }
 }
 @media (max-width: 540px) {
   .page .masthead { height: auto; min-height: 100px; grid-template-columns: 1fr; padding: 15px 0 4px; row-gap: 3px; }
