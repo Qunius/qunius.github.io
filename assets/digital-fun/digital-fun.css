@@ -29,12 +29,13 @@ h1, h2, p { margin: 0; }
 .intro { display: grid; grid-template-columns: 2fr 1fr; align-items: end; gap: 32px; padding: 54px 0 48px; }
 h1 { font-size: clamp(64px, 9.2vw, 160px); font-weight: 550; letter-spacing: -.04em; line-height: .97; }
 .intro p { font-size: clamp(15px, 1.25vw, 19px); line-height: 1.55; padding-bottom: 3px; }
-/* The music entry uses the portfolio's quiet label and action typography. */
+/* Shared project headings keep each piece distinct in the library. */
 .micro { font: 11px/1.6 SFMono-Regular, Consolas, "Liberation Mono", monospace; letter-spacing: .065em; text-transform: uppercase; }
-.music-entry { border-block: 1px solid var(--rule); margin-bottom: 32px; }
-.music-link { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 2fr) auto; align-items: center; gap: 20px 35px; padding: 28px 0; }
-.music-link .content-kind, .music-action { color: var(--muted); }
-.music-link h2 { font-size: 27px; letter-spacing: -.04em; }
+.project-entry { border-block: 1px solid var(--rule); }
+.project-entry + .project-entry { margin-top: 32px; }
+.project-header { display: grid; grid-template-columns: minmax(100px, 28%) minmax(0, 1fr) auto; align-items: center; gap: 20px 35px; padding: 28px 0; }
+.project-header .content-kind, .music-action { color: var(--muted); }
+.project-header h2 { font-size: 27px; letter-spacing: -.04em; }
 .music-action { display: inline-flex; align-items: center; gap: 8px; }
 .music-action svg { width: 16px; height: 16px; }
 .music-link:hover h2, .music-link:focus-visible h2 { color: var(--accent); }
@@ -44,7 +45,7 @@ h1 { font-size: clamp(64px, 9.2vw, 160px); font-weight: 550; letter-spacing: -.0
 #fire:focus-visible { outline: 1px dashed #aeb1b4; outline-offset: -12px; }
 .experiment-info { display: flex; flex-direction: column; justify-content: space-between; gap: 36px; padding: 42px 40px 40px 20px; }
 h2 { font-size: clamp(23px, 2.4vw, 38px); font-weight: 450; letter-spacing: -.025em; line-height: 1.15; }
-.description { margin-top: 16px; font-size: 16px; line-height: 1.6; max-width: 27ch; color: #c5c6c9; }
+.description { margin-top: 0; font-size: 16px; line-height: 1.6; max-width: 27ch; color: #c5c6c9; }
 .interaction { max-width: 34ch; }
 .interaction > p { font-size: 14px; line-height: 1.65; color: #c5c6c9; }
 .controls { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
@@ -64,9 +65,9 @@ footer a { text-decoration: underline; text-underline-offset: 4px; }
 .sr-only, .skip-link:not(:focus) { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip-link:focus { position: fixed; top: 12px; left: 12px; z-index: 5; background: var(--paper); padding: 16px; }
 @media (max-width: 800px) {
-  .music-link { grid-template-columns: minmax(0, 1fr) auto; gap: 20px; padding: 24px 0; }
-  .music-link .content-kind { grid-column: 1 / -1; font-size: 10px; }
-  .music-link h2 { font-size: 25px; }
+  .project-header { grid-template-columns: minmax(0, 1fr) auto; gap: 20px; padding: 24px 0; }
+  .project-header .content-kind { grid-column: 1 / -1; font-size: 10px; }
+  .project-header h2 { font-size: 25px; }
   .intro { grid-template-columns: 1fr; gap: 24px; padding: 42px 0 32px; }
   h1 { font-size: clamp(62px, 13.2vw, 104px); }
   .intro p { font-size: 16px; }
@@ -86,7 +87,7 @@ footer a { text-decoration: underline; text-underline-offset: 4px; }
   .fire-stage { min-height: 0; height: 116vw; max-height: 510px; }
   .experiment-info { grid-template-columns: 1fr; padding: 0 6vw 32px; gap: 28px; }
   .description, .interaction, .footnote { max-width: 40ch; }
-  .description { margin-top: 12px; }
+  .description { margin-top: 0; }
   .footnote { grid-column: auto; }
   footer { font-size: 12px; gap: 16px; }
 }

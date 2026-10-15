@@ -11,7 +11,7 @@
   <link rel="canonical" href="https://pavelli.fygital.se/digital-fun.html">
   <link rel="preload" href="/fonts/ABCArealVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/fonts/abc-areal.css">
-  <link rel="stylesheet" href="/assets/digital-fun/digital-fun.css?v=music-library-20261015">
+  <link rel="stylesheet" href="/assets/digital-fun/digital-fun.css?v=project-headings-20261015">
   <script src="/assets/digital-fun/temperature-fire.js" defer></script>
   <script src="/assets/digital-fun/digital-fun.js" defer></script>
 </head>
@@ -27,38 +27,41 @@
         <h1>Digital fun<span>.</span></h1>
         <p>En plats för små och stora digitala experiment</p>
       </div>
-      <article class="music-entry" aria-labelledby="music-title">
-        <a class="music-link" href="https://open.spotify.com/track/2YLjYx9HCLZWKiomokt2sp" target="_blank" rel="noopener noreferrer">
+      <article class="project-entry music-entry" aria-labelledby="music-title">
+        <a class="project-header music-link" href="https://open.spotify.com/track/2YLjYx9HCLZWKiomokt2sp" target="_blank" rel="noopener noreferrer">
           <span class="micro content-kind">Musik</span>
           <h2 id="music-title">En egen låt.</h2>
           <span class="music-action micro">Lyssna på Spotify <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" stroke-width="1.5"/></svg></span>
         </a>
       </article>
-      <article class="experiment" id="brasan" aria-labelledby="fire-title">
-        <div class="fire-stage">
-          <canvas id="fire" tabindex="0" role="img" aria-label="En interaktiv brasa av temperaturtal ovanpå korslagda ASCII-vedträn." aria-describedby="fire-instructions keyboard-instructions">Din webbläsare behöver stöd för Canvas för att visa brasan.</canvas>
-          <noscript><p class="fallback">Aktivera JavaScript för att leka med brasan.</p></noscript>
-          <p class="fallback" id="fire-error" hidden>Brasan kunde inte starta. Prova att ladda om sidan.</p>
-        </div>
-        <div class="experiment-info">
-          <div>
-            <h2 id="fire-title">Temperaturbrasa</h2>
+      <article class="project-entry" id="brasan" aria-labelledby="fire-title">
+        <header class="project-header">
+          <span class="micro content-kind">Interaktivt</span>
+          <h2 id="fire-title">Temperaturbrasa</h2>
+        </header>
+        <div class="experiment">
+          <div class="fire-stage">
+            <canvas id="fire" tabindex="0" role="img" aria-label="En interaktiv brasa av temperaturtal ovanpå korslagda ASCII-vedträn." aria-describedby="fire-instructions keyboard-instructions">Din webbläsare behöver stöd för Canvas för att visa brasan.</canvas>
+            <noscript><p class="fallback">Aktivera JavaScript för att leka med brasan.</p></noscript>
+            <p class="fallback" id="fire-error" hidden>Brasan kunde inte starta. Prova att ladda om sidan.</p>
+          </div>
+          <div class="experiment-info">
             <p class="description">En eld byggd av siffror. Varje tal är temperaturen just där.</p>
-          </div>
-          <div class="interaction">
-            <p id="fire-instructions">Klicka på veden för att tända. Håll nere vid basen för att blåsa liv i glöden, eller högre upp för att få lågorna att svaja.</p>
-            <div class="controls" id="fire-controls" hidden>
-              <button id="pause-fire" type="button" aria-pressed="false">Pausa</button>
-              <button id="reset-fire" type="button">Ny ved <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M19.6 11a8 8 0 1 0-2.1 6.5M20 12l-3-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="interaction">
+              <p id="fire-instructions">Klicka på veden för att tända. Håll nere vid basen för att blåsa liv i glöden, eller högre upp för att få lågorna att svaja.</p>
+              <div class="controls" id="fire-controls" hidden>
+                <button id="pause-fire" type="button" aria-pressed="false">Pausa</button>
+                <button id="reset-fire" type="button">Ny ved <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M19.6 11a8 8 0 1 0-2.1 6.5M20 12l-3-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <p id="motion-note" class="motion-note" hidden>Stillbild visas eftersom du har valt minskad rörelse.</p>
+              <p id="fire-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+              <details>
+                <summary>Med tangentbord</summary>
+                <p id="keyboard-instructions">Fokusera brasan med Tab. Enter blåser vid basen, Shift + Enter högre upp. Mellanslag pausar. Knappen Ny ved börjar om.</p>
+              </details>
             </div>
-            <p id="motion-note" class="motion-note" hidden>Stillbild visas eftersom du har valt minskad rörelse.</p>
-            <p id="fire-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-            <details>
-              <summary>Med tangentbord</summary>
-              <p id="keyboard-instructions">Fokusera brasan med Tab. Enter blåser vid basen, Shift + Enter högre upp. Mellanslag pausar. Knappen Ny ved börjar om.</p>
-            </details>
+            <p class="footnote">Veden brinner långsamt upp och lämnar glöd. Temperaturerna och färgerna är konstnärligt simulerade.</p>
           </div>
-          <p class="footnote">Veden brinner långsamt upp och lämnar glöd. Temperaturerna och färgerna är konstnärligt simulerade.</p>
         </div>
       </article>
     </main>
