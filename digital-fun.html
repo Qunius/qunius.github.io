@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="En plats för små digitala experiment av Pavel Li. Lek med en brasa byggd av temperaturtal, blås på glöden och se veden brinna upp.">
+  <meta name="theme-color" content="#e9e9e7">
+  <title>Digital fun · Pavel Li</title>
+  <link rel="canonical" href="https://pavelli.fygital.se/digital-fun.html">
+  <link rel="preload" href="/fonts/ABCArealVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts/abc-areal.css">
+  <link rel="stylesheet" href="/assets/digital-fun/digital-fun.css">
+  <script src="/assets/digital-fun/temperature-fire.js" defer></script>
+  <script src="/assets/digital-fun/digital-fun.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#brasan">Hoppa till brasan</a>
+  <div class="page">
+    <header class="masthead">
+      <a class="wordmark" href="/" aria-label="Pavel Li, till portfolion">P.L<span>.</span></a>
+      <a class="back-link" href="/#annat">Till portfolion <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" stroke-width="1.5"/></svg></a>
+    </header>
+    <main>
+      <div class="intro">
+        <h1>Digital fun<span>.</span></h1>
+        <p>En plats för små digitala experiment.<br>Sånt jag får lust att testa.</p>
+      </div>
+      <article class="experiment" id="brasan" aria-labelledby="fire-title">
+        <div class="fire-stage">
+          <canvas id="fire" tabindex="0" role="img" aria-label="En interaktiv brasa av temperaturtal ovanpå korslagda ASCII-vedträn." aria-describedby="fire-instructions keyboard-instructions">Din webbläsare behöver stöd för Canvas för att visa brasan.</canvas>
+          <noscript><p class="fallback">Aktivera JavaScript för att leka med brasan.</p></noscript>
+          <p class="fallback" id="fire-error" hidden>Brasan kunde inte starta. Prova att ladda om sidan.</p>
+        </div>
+        <div class="experiment-info">
+          <div>
+            <h2 id="fire-title">Temperaturbrasa</h2>
+            <p class="description">En eld byggd av siffror. Varje tal är temperaturen just där.</p>
+          </div>
+          <div class="interaction">
+            <p id="fire-instructions">Klicka på veden för att tända. Håll nere vid basen för att blåsa liv i glöden, eller högre upp för att få lågorna att svaja.</p>
+            <div class="controls" id="fire-controls" hidden>
+              <button id="pause-fire" type="button" aria-pressed="false">Pausa</button>
+              <button id="reset-fire" type="button">Ny ved <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M19.6 11a8 8 0 1 0-2.1 6.5M20 12l-3-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+            <p id="motion-note" class="motion-note" hidden>Stillbild visas eftersom du har valt minskad rörelse.</p>
+            <p id="fire-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+            <details>
+              <summary>Med tangentbord</summary>
+              <p id="keyboard-instructions">Fokusera brasan med Tab. Enter blåser vid basen, Shift + Enter högre upp. Mellanslag pausar. Knappen Ny ved börjar om.</p>
+            </details>
+          </div>
+          <p class="footnote">Veden brinner långsamt upp och lämnar glöd. Temperaturerna och färgerna är konstnärligt simulerade.</p>
+        </div>
+      </article>
+    </main>
+    <footer><span>Pavel Li © 2026</span><a href="/#annat">Tillbaka till annat roligt</a></footer>
+  </div>
+</body>
+</html>
