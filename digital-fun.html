@@ -72,15 +72,18 @@
           <span class="micro content-kind">Interaktivt</span>
           <h2 id="rain-title">Regn mot rutan</h2>
         </header>
+        <div class="rain-mount">
         <div class="rain-stage" id="rain-stage" tabindex="0" role="group" aria-label="Regn mot rutan, interaktivt immigt glas framför gröna växter" aria-describedby="rain-instructions rain-keyboard-instructions">
-          <img class="rain-photo" id="rain-photo" src="/assets/digital-fun/rain-plants.webp" width="1920" height="1440" alt="Ormbunkar och breda gröna blad i mjukt dagsljus." decoding="async">
+          <img class="rain-photo" id="rain-photo" src="/assets/digital-fun/rain-plants.webp" width="1280" height="960" alt="Ormbunkar och breda gröna blad i mjukt dagsljus." decoding="async">
+          <video class="rain-video" id="rain-video" data-src="/assets/digital-fun/rain-botanical.mp4" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
           <canvas class="rain-canvas" id="rain-glass" aria-hidden="true"></canvas>
           <span class="rain-cursor" id="rain-cursor" aria-hidden="true"></span>
           <noscript><p class="rain-error">Aktivera JavaScript för att torka imman från rutan.</p></noscript>
           <p class="rain-error" id="rain-error" hidden>Rutan kunde inte starta. Prova att ladda om sidan.</p>
         </div>
+        </div>
         <div class="rain-info">
-          <p class="rain-instructions" id="rain-instructions">Dra med fingret eller musen för att torka bort imman.<br><span>Regnet fortsätter på andra sidan.</span></p>
+          <p class="rain-instructions" id="rain-instructions">Ett ögonblick mellan inne och ute.<br><span>Dra över glaset. Låt grönskan träda fram.</span></p>
           <div class="rain-controls" id="rain-controls" hidden>
             <button id="rain-sound" type="button" aria-pressed="false">Ljud på</button>
             <button id="rain-pause" type="button" aria-pressed="false">Pausa</button>

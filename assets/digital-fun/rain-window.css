@@ -1,14 +1,19 @@
-/* The photograph is the whole stage; all instructions stay below the glass. */
-.rain-stage { position: relative; width: 100%; aspect-ratio: 16 / 10; overflow: hidden; background: #d4dcd1; touch-action: none; cursor: crosshair; isolation: isolate; }
+/* A quiet photographic plate, with the interactive instructions outside the glass. */
+.rain-entry .project-header { padding-block: 42px 34px; }
+.rain-entry .project-header h2 { font-size: clamp(30px, 3.7vw, 54px); font-weight: 450; letter-spacing: -.045em; }
+.rain-mount { padding: clamp(24px, 5.5vw, 80px); background: #f5f5f1; }
+.rain-video { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.rain-stage { position: relative; width: 100%; aspect-ratio: 16 / 10; overflow: hidden; background: #d4dcd1; box-shadow: 0 2px 4px #18261b10; touch-action: none; cursor: crosshair; isolation: isolate; }
 .rain-stage:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
 .rain-photo, .rain-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 .rain-canvas { opacity: 0; pointer-events: none; }
 .rain-ready .rain-canvas { opacity: 1; }
-.rain-cursor { position: absolute; width: 52px; height: 52px; border: 1px solid rgba(255,255,255,.95); outline: 1px solid rgba(40,60,40,.55); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; opacity: 0; }
+.rain-cursor { position: absolute; width: 18px; height: 18px; border: 1px solid rgba(255,255,255,.95); outline: 1px solid rgba(40,60,40,.55); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; opacity: 0; }
 .rain-keyboard:focus .rain-cursor { opacity: 1; }
-.rain-info { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px 48px; padding: 25px 0 28px; align-items: start; }
-.rain-instructions { font-size: 15px; line-height: 1.65; max-width: 52ch; }
-.rain-instructions span { color: var(--muted); }
+.rain-info { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 24px 48px; padding: 27px 0 30px; align-items: start; }
+.rain-instructions { font-size: 17px; line-height: 1.65; max-width: 52ch; }
+.rain-instructions span { color: var(--muted); font-size: 14px; }
 .rain-controls { display: flex; flex-wrap: wrap; gap: 10px 23px; }
 .rain-controls button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 0; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; color: var(--ink); background: transparent; font-size: 14px; cursor: pointer; }
 .rain-controls button:hover { color: var(--accent); border-color: var(--accent); }
@@ -20,6 +25,8 @@
 .rain-help > p { margin-top: 8px; line-height: 1.6; }
 .rain-error { position: absolute; inset: auto 18px 18px; padding: 12px; background: var(--paper); font-size: 14px; }
 @media (max-width: 800px) {
+  .rain-entry .project-header { padding-block: 28px; }
+  .rain-mount { padding: 20px; }
   .rain-stage { aspect-ratio: 4 / 5; }
   .rain-info { grid-template-columns: 1fr; gap: 14px; padding: 22px 0 24px; }
   .rain-instructions { max-width: 45ch; }

@@ -58,18 +58,6 @@ test('manual wipe still changes condensation on a paused clock', () => {
   assert.equal(fog.sample(.5, .5, state.time), 1);
 });
 
-test('touching drops merge by area and a large merged drop starts running', () => {
-  assert.ok(core, 'rain simulation is available');
-  const rain = new core.DropField(1000, 800, () => .5, 0);
-  rain.drops = [{x:300,y:200,r:3.6,vy:0,seed:1}, {x:304,y:200,r:3.6,vy:0,seed:2}];
-  rain.step(.016);
-  assert.equal(rain.drops.length, 1);
-  assert.ok(Math.abs(rain.drops[0].r - Math.sqrt(25.92)) < .01);
-  const y = rain.drops[0].y;
-  for (let i = 0; i < 60; i++) rain.step(1/60);
-  assert.ok(rain.drops[0].y > y + 5);
-});
-
 test('center-cover crop preserves the photo aspect ratio in wide and narrow scenes', () => {
   assert.ok(core, 'rain simulation is available');
   const wide = core.coverCrop(4/3, 16/10);
@@ -80,12 +68,36 @@ test('center-cover crop preserves the photo aspect ratio in wide and narrow scen
   assert.equal(narrow[1], 1);
 });
 
-test('a long visit keeps receiving new running drops rather than exhausting the initial rain', () => {
-  let seed=123;
-  const random=()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646;};
-  const rain=new core.DropField(1280,800,random,160);
-  for(let i=0;i<3600;i++)rain.step(1/30);
-  assert.ok(rain.drops.some(d=>d.vy>10), 'there is still flowing rain after two minutes');
-  assert.ok(rain.drops.length<=195, 'drop population stays bounded');
-  assert.ok(rain.trails.length<=1800);
+test('a pending video play cannot restart playback after pause or leaving the page', async () => {
+  let finish;
+  const video={paused:true,pause(){this.paused=true;},play(){return new Promise(resolve=>{finish=()=>{this.paused=false;resolve();};});}};
+  const playback=new core.MediaPlayback(video);
+  const playing=playback.sync(true);
+  playback.sync(false);
+  finish();await playing;
+  assert.equal(video.paused,true);
+  assert.equal(playback.wanted,false);
+});
+
+test('a rejected video start reports the blocked state and allows a fresh user retry', async () => {
+  let attempts=0,blocked=0;
+  const video={paused:true,pause(){this.paused=true;},play(){attempts++;if(attempts===1)return Promise.reject(new Error('blocked'));this.paused=false;return Promise.resolve();}};
+  const playback=new core.MediaPlayback(video,()=>blocked++);
+  await playback.sync(true);
+  assert.equal(blocked,1);
+  await playback.sync(true);
+  assert.equal(video.paused,false);
+  playback.sync(false);
+  assert.equal(video.paused,true);
+});
+
+test('an obsolete play rejection cannot pause a newer resume request', async () => {
+  const pending=[];let blocked=0;
+  const video={paused:true,pause(){this.paused=true;},play(){return new Promise((resolve,reject)=>pending.push({resolve,reject}));}};
+  const playback=new core.MediaPlayback(video,()=>blocked++);
+  const first=playback.sync(true);playback.sync(false);const second=playback.sync(true);
+  pending[0].reject(new Error('interrupted by pause'));await first;
+  assert.equal(blocked,0);
+  assert.equal(pending.length,2,'resuming starts a fresh play request');
+  pending[1].resolve();await second;
 });

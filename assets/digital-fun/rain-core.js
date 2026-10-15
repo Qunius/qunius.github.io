@@ -62,74 +62,26 @@
     }
   }
 
-  class DropField {
-    constructor(width, height, random = Math.random, count = 160) {
-      this.width = width; this.height = height; this.random = random;
-      this.drops = []; this.trails = []; this.spawn = 0; this.time = 0;
-      this.target = count;
-      for (let i = 0; i < count; i++) this.add(i < 16);
-    }
-    add(large = false) {
-      const r = this.random;
-      this.drops.push({ x:r() * this.width, y:r() * this.height,
-        r:large ? 4.8 + r() * 2.6 : 1.6 + Math.pow(r(), 2) * 2.8,
-        vy:0, seed:r() * 100 });
-    }
-    resize(width, height) {
-      const sx = width / this.width, sy = height / this.height;
-      for (const d of this.drops) { d.x *= sx; d.y *= sy; }
-      this.trails.length = 0; this.width = width; this.height = height;
-    }
-    step(dt) {
-      if (!dt) return;
-      this.time += dt;
-      this.spawn += dt * 4;
-      while (this.spawn >= 1) {
-        this.spawn--;
-        if (this.target && this.drops.length >= this.target + 35) {
-          // Incoming rain replaces the finest pinned bead when the surface is saturated.
-          let smallest=0;
-          for(let i=1;i<this.drops.length;i++)if(this.drops[i].r<this.drops[smallest].r)smallest=i;
-          this.drops.splice(smallest,1);
-        }
-        if(this.target)this.add(this.random()<.16);
-      }
-      for (const d of this.drops) {
-        const oldX = d.x, oldY = d.y;
-        // Surface tension pins small beads. Heavy beads break free and leave a wet trace.
-        if (d.r > 4.6) {
-          const target = (d.r - 3.8) * 28 * (.65 + .35 * Math.sin(this.time * 1.4 + d.seed));
-          d.vy += (target - d.vy) * Math.min(1, dt * 4);
-          d.y += d.vy * dt;
-          d.x += Math.sin(d.y * .027 + d.seed) * dt * 2;
-          if (d.y - oldY > .1) this.trails.push({x:oldX,y:oldY,x2:d.x,y2:d.y,r:Math.min(1.6,d.r*.18),born:this.time});
-          d.r = Math.max(1, d.r - dt * .035);
-        }
-      }
-      // A small spatial grid keeps merging bounded even on long-running visits.
-      const grid = new Map();
-      for (let i = 0; i < this.drops.length; i++) {
-        const a = this.drops[i]; if (a.dead) continue;
-        const cx = Math.floor(a.x / 32), cy = Math.floor(a.y / 32);
-        for (let yy = cy - 1; yy <= cy + 1; yy++) for (let xx = cx - 1; xx <= cx + 1; xx++) {
-          const bucket = grid.get(`${xx},${yy}`) || [];
-          for (const b of bucket) {
-            if (b.dead || Math.hypot(a.x-b.x,a.y-b.y) > (a.r+b.r)*.82) continue;
-            const areaA=a.r*a.r, areaB=b.r*b.r, area=areaA+areaB;
-            a.x=(a.x*areaA+b.x*areaB)/area; a.y=Math.max(a.y,b.y);
-            a.r=Math.min(13,Math.sqrt(area)); a.vy=Math.max(a.vy,b.vy); b.dead=true;
-          }
-        }
-        const key=`${cx},${cy}`;
-        if (!grid.has(key)) grid.set(key,[]);
-        grid.get(key).push(a);
-      }
-      this.drops = this.drops.filter(d => !d.dead && d.y < this.height + d.r * 2);
-      this.trails = this.trails.filter(t => this.time-t.born < 8).slice(-1800);
+  // Video play can resolve after a page has been paused or hidden.
+  class MediaPlayback {
+    constructor(video, onBlocked = () => {}) { this.video=video; this.onBlocked=onBlocked; this.wanted=false; this.pending=null; this.request=0; }
+    sync(running) {
+      this.wanted=running;
+      if(!running) { this.request++; this.pending=null; this.video.pause(); return Promise.resolve(); }
+      if(this.pending) return this.pending;
+      if(!this.video.paused) return Promise.resolve();
+      const request=++this.request;
+      try {
+        this.pending=Promise.resolve(this.video.play()).then(()=>{
+          if(!this.wanted)this.video.pause();
+        }).catch(()=>{ if(this.wanted&&request===this.request)this.onBlocked(); }).finally(()=>{if(request===this.request)this.pending=null;});
+      } catch(error) { this.onBlocked(); return Promise.resolve(); }
+      return this.pending;
     }
   }
+
   const coverCrop = (imageAspect, stageAspect) => stageAspect > imageAspect ? [1,imageAspect/stageAspect] : [stageAspect/imageAspect,1];
-  const api = { RainState, FogField, DropField, coverCrop, clamp };
+  const api = { RainState, FogField, MediaPlayback, coverCrop, clamp };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.RainCore = api;
 })(typeof window !== 'undefined' ? window : globalThis);
