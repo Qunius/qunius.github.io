@@ -11,7 +11,7 @@
 .digital-fun-copy { display: contents; }
 .digital-fun-copy > .music-title { grid-column: 2; grid-row: 1; }
 .digital-fun-summary { grid-column: 2 / -1; grid-row: 2; font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 560px; }
-.digital-fun-action { grid-column: 3; grid-row: 1; justify-self: end; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; }
+.digital-fun-action { grid-column: 3; grid-row: 1; justify-self: end; color: var(--muted); }
 .digital-fun-row:hover .hover-line { color: var(--accent); }
 .masthead nav a { white-space: nowrap; }
 @media (max-width: 760px) {
