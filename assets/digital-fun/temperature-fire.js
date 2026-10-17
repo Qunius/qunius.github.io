@@ -14,6 +14,7 @@
     spreadSpeed: 0.022, // Längd per sekund i brasans normaliserade koordinater.
     charSeconds: 28,    // Tid från antändning till helt förkolnad bark.
     burnSeconds: 110,   // Brinntid för en antänd del; spridningen tar extra tid.
+    ambientTemperature: 0, // A cold outdoor setting; exhausted fuel cools to this temperature.
     fontFamily: '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
     palette: [
       [55,  '#54565a'],
@@ -272,11 +273,14 @@
           this.visibleWood.add(`${mark.row}:${Math.floor(mark.col / 3)}`);
           if (emberAlpha > bodyAlpha) {
             const pulse = noise(mark.nx * 23 + mark.logId, this.time * 0.35);
-            const temperature = Math.round(clamp(86 + fuel.ember * (58 + mark.seed * 24)
+            const hotVisual = Math.round(clamp(86 + 58 + mark.seed * 24
               + pulse * 16 + Math.min(80, this.extraHeatAt(mark.nx, mark.ny)), 55, 240));
+            // Both the colour and reading lose all stored heat. Noise and an old
+            // air puff must not leave a permanent glow after the fuel is exhausted.
+            const temperature = Math.round(lerp(55, hotVisual, fuel.ember));
             ctx.fillStyle = this.colors[temperature];
             ctx.globalAlpha = emberAlpha;
-            const glyph = mark.numeric ? String(this.celsiusReading(temperature, 'ember')).padStart(3, '0')
+            const glyph = mark.numeric ? String(this.celsiusReading(hotVisual, 'ember', fuel.ember)).padStart(3, '0')
               : mark.seed < 0.24 ? '*' : mark.seed < 0.63 ? ':' : '.';
             ctx.fillText(glyph, mark.x, mark.y);
             continue;
@@ -355,7 +359,7 @@
         const consumed = smooth(Math.min(6, duration * 0.1), duration, age);
         return { age, consumed, remaining: 1 - consumed,
           flame: age < 0 ? 0 : 1 - smooth(0.12, 0.96, consumed),
-          ember: age < 0 ? 0 : 1 - 0.65 * smooth(duration, duration + 120, age) };
+          ember: age < 0 ? 0 : 1 - smooth(duration, duration + 240, age) };
       }
 
       fuelAtX(x, t) {
@@ -505,27 +509,28 @@
         return heat * Math.exp(-Math.pow((y - 0.025) / 0.20, 2) * 1.5);
       }
 
-      celsiusReading(visualTemperature, material = 'flame') {
-        // Calibrate only the printed estimates. The original live field, palette,
-        // motion and interactions remain independent of these Celsius labels.
+      celsiusReading(visualTemperature, material = 'flame', remainingHeat = 1) {
+        // The active flame's original field and palette are independent of these
+        // Celsius labels. Ember cooling also blends its colour back to cold grey.
         // Representative flame range: NBSIR 80-2054 vol. I, table 6-8.
+        const ambient = this.options?.ambientTemperature ?? SETTINGS.ambientTemperature;
         const heat = clamp((visualTemperature - 55) / 185, 0, 1);
         const boost = 1 - Math.exp(-Math.max(0, visualTemperature - 240) / 160);
         let reading, maximum;
         if (material === 'wood') {
-          reading = 20 + Math.max(0, visualTemperature - 80) * 3;
+          reading = ambient + Math.max(0, visualTemperature - 80) * 3;
           maximum = 800;
         } else if (material === 'ember') {
-          reading = 20 + 720 * Math.pow(heat, 0.35);
+          reading = ambient + (740 - ambient) * Math.pow(heat, 0.35) * clamp(remainingHeat, 0, 1);
           maximum = 800;
         } else if (material === 'spark') {
-          reading = 20 + 880 * Math.pow(heat, 0.45) + 100 * boost;
+          reading = ambient + (900 - ambient) * Math.pow(heat, 0.45) + 100 * boost;
           maximum = 1000;
         } else {
-          reading = 20 + 980 * Math.pow(heat, 0.35) + 150 * boost;
+          reading = ambient + (1000 - ambient) * Math.pow(heat, 0.35) + 150 * boost;
           maximum = 1150;
         }
-        return Math.round(clamp(reading, 20, maximum) / 5) * 5;
+        return Math.round(clamp(reading, ambient, maximum) / 5) * 5;
       }
 
       temperatureAt(x, y, t) {
