@@ -7,6 +7,7 @@
   // Flame gas, wood surfaces and embers are separate modelled temperatures.
   // The noise field below describes the silhouette, not degrees Celsius.
   const THERMAL = { ambient: 22, maxFlame: 1150, maxAirBoost: 150 };
+  const AIR_PULSE_SECONDS = 2.8;
   // Page controls and lifecycle live in digital-fun.js.
   const SETTINGS = {
     fontSize: 9,
@@ -22,14 +23,18 @@
     fontFamily: '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
     palette: [
       [22,   '#54565a'],
-      [200,  '#69696b'],
-      [400,  '#8c7770'],
-      [500,  '#a43a2b'],
-      [600,  '#d94828'],
-      [750,  '#ff8245'],
-      [900,  '#ffbc60'],
-      [1000, '#ffe09b'],
-      [1150, '#fff0c9']
+      [300,  '#8c8e91'],
+      [440,  '#9f3848'],
+      [540,  '#d13645'],
+      [650,  '#ff4935'],
+      [740,  '#ff9e32'],
+      [810,  '#ffe65d'],
+      [855,  '#fff8d2'],
+      [885,  '#eff8ff'],
+      [925,  '#8cdbff'],
+      [975,  '#4aa8ff'],
+      [1050, '#597ded'],
+      [1150, '#9771e8']
     ]
   };
 
@@ -143,8 +148,8 @@
           t,
           rgb: [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
         })).sort((a, b) => a.t - b.t);
-        // A warm visual interpretation: flame colour also depends on soot and chemistry.
-        // Higher gas temperature does not automatically turn a wood fire blue.
+        // An expressive heat palette. Cyan and blue are artistic accents,
+        // not a claim about the literal colour of wood flames at these temperatures.
         this.colors = Array.from({ length: THERMAL.maxFlame + 1 }, (_, temperature) => {
           let left = points[0], right = points[points.length - 1];
           if (temperature <= left.t) right = left;
@@ -377,6 +382,7 @@
         if (this.combustionCache.time === t) return this.combustionCache;
         const strengths = tongues.map(tongue => this.fuelAtX(tongue.root, t).flame);
         this.combustionCache = { time: t, strengths,
+          lifts: tongues.map(tongue => this.plumeLiftAt(tongue.root, t)),
           strength: strengths.reduce((sum, strength) => sum + strength, 0) / strengths.length };
         return this.combustionCache;
       }
@@ -410,15 +416,16 @@
         return smooth(3, Math.max(4, this.options.charSeconds), exposure);
       }
 
-      ignitionHeatAt(x, y, t) {
+      ignitionHeatAt(x, y, t, localLift = this.airLiftAt(x, y, t)) {
         let heat = 0;
         for (const source of this.burningSourcesAt(t)) {
           const age = t - source.start;
-          if (age < 0 || source.flame <= 0 || Math.abs(x - source.x) > 0.30 || y < source.y - 0.12 || y > source.y + 0.50) continue;
+          if (age < 0 || source.flame <= 0 || Math.abs(x - source.x) > 0.30 || y < source.y - 0.12 || y > source.y + 0.60) continue;
           const growth = smooth(0, 2.4, age);
           const scale = (source.scale || 1) * Math.pow(source.flame, 0.65);
           const height = (0.07 + growth * 0.38) * scale
-            * (0.90 + 0.10 * Math.sin(t * 1.4 + source.phase));
+            * (0.90 + 0.10 * Math.sin(t * 1.4 + source.phase))
+            * (1 + 0.20 * this.plumeLiftAt(source.x, t));
           const u = (y - source.y) / height;
           const bed = Math.exp(-Math.pow((x - source.x) / 0.12, 2) * 2
             - Math.pow((y - source.y) / 0.055, 2) * 2) * 0.85;
@@ -426,7 +433,8 @@
           if (u >= 0 && u < 1) {
             const flow = noise(x * 9 + source.phase, y * 12 - t * 1.25);
             const center = source.x + Math.sin(u * 7 - t * 1.4 + source.phase) * u * 0.045;
-            const width = (0.055 + growth * 0.075) * scale * Math.pow(1 - u, 0.65) * (0.8 + flow * 0.35);
+            const width = (0.055 + growth * 0.075) * scale * Math.pow(1 - u, 0.65)
+              * (0.8 + flow * 0.35) * (1 + 0.12 * localLift);
             const distance = (x - center) / (width + 0.004);
             flame = Math.exp(-distance * distance * 1.6) * Math.pow(1 - u, 0.55) * (0.60 + flow * 0.40);
           }
@@ -452,7 +460,7 @@
           x, y, fuel, direction: x <= 0 ? 1 : -1, start: this.time
         });
         if (fuel > 0.015) {
-          this.heatPuffs = this.heatPuffs.filter(puff => this.time - puff.start < 0.55).slice(-7);
+          this.heatPuffs = this.heatPuffs.filter(puff => this.time - puff.start < AIR_PULSE_SECONDS).slice(-17);
           this.heatPuffs.push({ x, strength: fuel, start: this.time });
         }
         // A direct response remains available when motion is reduced or manually paused.
@@ -477,6 +485,33 @@
           pushY += (0.55 + 0.45 * Math.tanh(dy / 0.12)) * 0.045 * influence;
         }
         return pushX || pushY ? { x: clamp(pushX, -0.24, 0.24), y: Math.min(pushY, 0.08) } : null;
+      }
+
+      plumeLiftAt(x, t) {
+        // Air feeds the whole tongue gently; the hotter pocket itself rises below.
+        let lift = 0;
+        for (const puff of this.heatPuffs) {
+          const age = t - puff.start;
+          if (age < 0 || age >= AIR_PULSE_SECONDS) continue;
+          const distance = (x - puff.x) / 0.32;
+          lift += puff.strength * Math.exp(-distance * distance * 1.5)
+            * smooth(0, 0.45, age) * (1 - smooth(1.2, AIR_PULSE_SECONDS, age));
+        }
+        return clamp(lift, 0, 1);
+      }
+
+      airLiftAt(x, y, t) {
+        // A warm pulse travels up from the wood instead of heating every row at once.
+        let lift = 0;
+        for (const puff of this.heatPuffs) {
+          const age = t - puff.start;
+          if (age < 0 || age >= AIR_PULSE_SECONDS) continue;
+          const dx = (x - puff.x) / (0.16 + age * 0.025);
+          const dy = (y - 0.025 - age * 0.38) / (0.08 + age * 0.045);
+          lift += puff.strength * Math.exp(-dx * dx * 1.8 - dy * dy * 2)
+            * smooth(0, 0.12, age) * (1 - smooth(1.3, AIR_PULSE_SECONDS, age));
+        }
+        return clamp(lift, 0, 1);
       }
 
       updateFuelHeat(dt) {
@@ -525,11 +560,12 @@
         const reaction = smooth(0.015, 0.20, y) * (1 - smooth(0.45, 0.95, y));
         const peak = 900 + reaction * 180;
         const normal = THERMAL.ambient + (peak - THERMAL.ambient) * Math.pow(heat, 0.28);
-        const extra = this.extraHeatAt(x, y) * smooth(0.02, 0.18, heat);
+        const extra = (this.extraHeatAt(x, y) + 70 * this.airLiftAt(x, y, t)) * smooth(0.02, 0.18, heat);
         return clamp(normal + extra, THERMAL.ambient, THERMAL.maxFlame);
       }
 
       heatAt(x, y, t) {
+        const lift = this.airLiftAt(x, y, t);
         const wind = this.windAt(x, y, t);
         if (wind) { x -= wind.x; y -= wind.y; }
         const intensity = clamp(this.options.intensity, 0.2, 2);
@@ -543,15 +579,17 @@
         for (let index = 0; index < tongues.length; index++) {
           const tongue = tongues[index], strength = combustion.strengths[index];
           if (strength <= 0) continue;
-          const h = tongue.height * (0.87 + 0.15 * Math.sin(t * 0.8 + tongue.phase)
+          const baseHeight = tongue.height * (0.87 + 0.15 * Math.sin(t * 0.8 + tongue.phase)
             + 0.10 * Math.sin(t * 1.7 + tongue.phase * 2)) * Math.pow(strength, 0.65);
+          // Grow moderately while retaining headroom inside the original text grid.
+          const h = Math.max(baseHeight, Math.min(0.99, baseHeight * (1 + 0.22 * combustion.lifts[index])));
           const u = y / h;
           if (u >= 1 || u < 0) continue;
           const center = tongue.root * (1 - 0.32 * u)
             + Math.sin(y * 8.7 - t * 1.4 + tongue.phase) * (0.025 + u * 0.10)
             + Math.sin(y * 18 - t * 2.1 + tongue.phase) * u * 0.025;
           const width = tongue.width * Math.pow(1 - u, 0.62)
-            * (0.78 + flow * 0.48);
+            * (0.78 + flow * 0.48) * (1 + 0.12 * lift);
           const distance = (x + bend - center) / (width + 0.008);
           const plume = Math.exp(-distance * distance * 1.7) * Math.pow(1 - u, 0.52) * strength;
           flame = Math.max(flame, plume) + Math.min(flame, plume) * 0.13;
@@ -561,13 +599,13 @@
         const bed = bedShape * (0.48 + noise(x * 17 + 20, t * 0.5) * 0.55) * combustion.strength;
         const heat = flame * (0.64 + 0.55 * flow) - 0.105
           + (detail - 0.38) * 0.17 * smooth(0.02, 0.2, flame);
-        return clamp(Math.max(heat, bed, this.ignitionHeatAt(x, y, t)) * (0.75 + 0.25 * intensity), 0, 1);
+        return clamp(Math.max(heat, bed, this.ignitionHeatAt(x, y, t, lift)) * (0.75 + 0.25 * intensity), 0, 1);
       }
 
       draw(dt) {
         if (this.destroyed || !this.width) return;
         this.gusts = this.gusts.filter(gust => this.time - gust.start < 1.5);
-        this.heatPuffs = this.heatPuffs.filter(puff => this.time - puff.start < 0.55);
+        this.heatPuffs = this.heatPuffs.filter(puff => this.time - puff.start < AIR_PULSE_SECONDS);
         this.updateFuelHeat(dt);
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.width, this.height);
