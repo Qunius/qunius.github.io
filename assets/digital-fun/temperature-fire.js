@@ -1,7 +1,12 @@
 
   'use strict';
 
-  // TemperatureFire: the original interactive artwork, with a transparent canvas.
+  // A temperature-inspired artwork, not a combustion solver or a measurement.
+  // Representative dry-wood flame range: NBSIR 80-2054 vol. I, table 6-8.
+  // https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nbsir80-2054v1.pdf
+  // Flame gas, wood surfaces and embers are separate modelled temperatures.
+  // The noise field below describes the silhouette, not degrees Celsius.
+  const THERMAL = { ambient: 22, maxFlame: 1150, maxAirBoost: 150 };
   // Page controls and lifecycle live in digital-fun.js.
   const SETTINGS = {
     fontSize: 9,
@@ -9,27 +14,22 @@
     fillerAmount: 0.27,
     speed: 1,
     maxFPS: 30,
-    heatingRate: 90,  // Extra grader per sekund vid ihållande luft.
-    coolingRate: 75,
+    heatingRate: 45,  // Extra modelled degrees per second with sustained air.
+    coolingRate: 18,
     spreadSpeed: 0.022, // Längd per sekund i brasans normaliserade koordinater.
     charSeconds: 28,    // Tid från antändning till helt förkolnad bark.
     burnSeconds: 110,   // Brinntid för en antänd del; spridningen tar extra tid.
     fontFamily: '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
     palette: [
-      [55,  '#54565a'],
-      [90,  '#8c8e91'],
-      [120, '#c4ad64'],
-      [150, '#ffe36b'],
-      [175, '#ff922e'],
-      [200, '#ff4027'],
-      [240, '#d71e20'],
-      [320, '#ff8245'],
-      [400, '#ffe09b'],
-      [500, '#fff9ec'],
-      [580, '#ffffff'],
-      [680, '#bce6ff'],
-      [800, '#78bdff'],
-      [899, '#4e98f0']
+      [22,   '#54565a'],
+      [200,  '#69696b'],
+      [400,  '#8c7770'],
+      [500,  '#a43a2b'],
+      [600,  '#d94828'],
+      [750,  '#ff8245'],
+      [900,  '#ffbc60'],
+      [1000, '#ffe09b'],
+      [1150, '#fff0c9']
     ]
   };
 
@@ -143,7 +143,9 @@
           t,
           rgb: [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
         })).sort((a, b) => a.t - b.t);
-        this.colors = Array.from({ length: 1000 }, (_, temperature) => {
+        // A warm visual interpretation: flame colour also depends on soot and chemistry.
+        // Higher gas temperature does not automatically turn a wood fire blue.
+        this.colors = Array.from({ length: THERMAL.maxFlame + 1 }, (_, temperature) => {
           let left = points[0], right = points[points.length - 1];
           if (temperature <= left.t) right = left;
           else if (temperature >= right.t) left = right;
@@ -272,13 +274,13 @@
           this.visibleWood.add(`${mark.row}:${Math.floor(mark.col / 3)}`);
           if (emberAlpha > bodyAlpha) {
             const pulse = noise(mark.nx * 23 + mark.logId, this.time * 0.35);
-            const temperature = Math.round(clamp(86 + fuel.ember * (58 + mark.seed * 24)
-              + pulse * 16 + Math.min(80, this.extraHeatAt(mark.nx, mark.ny)), 55, 240));
+            const temperature = Math.round(this.emberTemperature(fuel.ember, mark.seed, pulse,
+              this.extraHeatAt(mark.nx, mark.ny)) / 5) * 5;
             ctx.fillStyle = this.colors[temperature];
             ctx.globalAlpha = emberAlpha;
             const glyph = mark.numeric ? String(temperature).padStart(3, '0')
               : mark.seed < 0.24 ? '*' : mark.seed < 0.63 ? ':' : '.';
-            ctx.fillText(glyph, mark.x, mark.y);
+            ctx.fillText(glyph, mark.x, mark.y, this.cellW * (mark.numeric ? 0.94 : 1));
             continue;
           }
           const char = this.charAt(mark.logId, mark.u, this.time);
@@ -287,15 +289,15 @@
             this.ignitionHeatAt(mark.nx, mark.ny, this.time));
           const crack = mark.numeric || (!mark.cap && mark.seed < lerp(0.18, 0.07, char));
           const glow = contact * (crack ? 1 : 0.30);
-          const grain = mark.cap ? 98 : mark.edge ? 103 : 78 + mark.seed * 18;
-          const normal = 55 + Math.pow(this.heatAt(mark.nx, Math.max(mark.ny, 0.01), this.time), 0.64) * 185;
-          const temperature = Math.round(clamp(grain + glow * (normal - 80 + this.extraHeatAt(mark.nx, mark.ny)), 55, 899));
+          const temperature = Math.round(this.woodTemperature(contact, char, crack,
+            this.extraHeatAt(mark.nx, mark.ny)) / 5) * 5;
           const shade = Math.round(char * (mark.edge ? 0.85 : 1) * 16);
           ctx.fillStyle = crack ? this.colors[temperature] : this.charColors[shade][temperature];
           ctx.globalAlpha = (mark.cap || mark.edge ? 0.90 : 0.66 + glow * 0.30) * bodyAlpha;
           const glyph = !mark.edge && !mark.cap && char > 0.35 + mark.seed * 0.30
             ? ['#', ':', '%'][Math.floor(mark.seed * 3)] : mark.mark;
-          ctx.fillText(mark.numeric ? String(temperature).padStart(3, '0') : glyph, mark.x, mark.y);
+          ctx.fillText(mark.numeric ? String(temperature).padStart(3, '0') : glyph,
+            mark.x, mark.y, this.cellW * (mark.numeric ? 0.94 : 1));
         }
       }
 
@@ -355,7 +357,7 @@
         const consumed = smooth(Math.min(6, duration * 0.1), duration, age);
         return { age, consumed, remaining: 1 - consumed,
           flame: age < 0 ? 0 : 1 - smooth(0.12, 0.96, consumed),
-          ember: age < 0 ? 0 : 1 - 0.65 * smooth(duration, duration + 120, age) };
+          ember: age < 0 ? 0 : 1 - smooth(duration, duration + 240, age) };
       }
 
       fuelAtX(x, t) {
@@ -493,7 +495,7 @@
           air = clamp(air, 0, 1);
           const rate = Math.max(0, this.options.heatingRate) * air
             - Math.max(0, this.options.coolingRate) * (1 - air);
-          this.fuelHeat[i] = clamp(this.fuelHeat[i] + rate * dt, 0, 620);
+          this.fuelHeat[i] = clamp(this.fuelHeat[i] + rate * dt, 0, THERMAL.maxAirBoost);
         }
       }
 
@@ -505,11 +507,26 @@
         return heat * Math.exp(-Math.pow((y - 0.025) / 0.20, 2) * 1.5);
       }
 
-      temperatureAt(x, y, t) {
-        const heat = this.heatAt(x, y, t);
-        const normal = 55 + Math.pow(heat, 0.64) * 185;
-        const extra = this.extraHeatAt(x, y, t) * smooth(0.02, 0.18, heat);
-        return clamp(normal + extra, 55, 899);
+      woodTemperature(contact, char, crack, extra = 0) {
+        // Cooler outer wood pyrolyses; exposed charcoal in cracks can glow hotter.
+        const surface = 280 + char * 230 + (crack ? 120 : 0);
+        return clamp(THERMAL.ambient + contact * (surface + extra * 0.55), THERMAL.ambient, 800);
+      }
+
+      emberTemperature(ember, seed, pulse, extra = 0) {
+        return clamp(THERMAL.ambient + ember * (530 + seed * 150 + pulse * 30 + extra * 0.55),
+          THERMAL.ambient, 850);
+      }
+
+      temperatureAt(x, y, t, heat = this.heatAt(x, y, t)) {
+        // The reaction region above the wood is hotter than the fuel itself.
+        // Dilution and heat loss cool the edges and the upper plume. This envelope
+        // is an artistic approximation; it does not infer temperature from colour.
+        const reaction = smooth(0.015, 0.20, y) * (1 - smooth(0.45, 0.95, y));
+        const peak = 900 + reaction * 180;
+        const normal = THERMAL.ambient + (peak - THERMAL.ambient) * Math.pow(heat, 0.28);
+        const extra = this.extraHeatAt(x, y) * smooth(0.02, 0.18, heat);
+        return clamp(normal + extra, THERMAL.ambient, THERMAL.maxFlame);
       }
 
       heatAt(x, y, t) {
@@ -561,28 +578,33 @@
         const response = dt === 0 ? 1 : 1 - Math.exp(-dt * 11);
         for (const cell of this.cells) {
           if (this.visibleWood.has(cell.gridKey)) continue;
-          const target = this.temperatureAt(cell.nx, cell.ny, this.time);
+          const heat = this.heatAt(cell.nx, cell.ny, this.time);
+          const target = this.temperatureAt(cell.nx, cell.ny, this.time, heat);
           cell.temperature = cell.temperature === null ? target
             : lerp(cell.temperature, target, response);
-          const temperature = Math.round(cell.temperature);
-          if (temperature < 72) continue;
-          // Color is chosen from the actual displayed integer, never a separate random value.
+          // Keep the original silhouette and sparse ASCII fringe independently of °C.
+          const densityTarget = Math.pow(heat, 0.64);
+          cell.density = cell.density === undefined ? densityTarget : lerp(cell.density, densityTarget, response);
+          if (cell.density < 0.092) continue;
+          const temperature = Math.round(cell.temperature / 5) * 5;
+          // Colour is chosen from the displayed estimate, not a random value.
           ctx.fillStyle = this.colors[temperature];
-          ctx.globalAlpha = smooth(69, 112, cell.temperature) * (0.86 + cell.seed * 0.14);
-          const edge = 1 - smooth(87, 132, temperature);
+          ctx.globalAlpha = smooth(0.076, 0.308, cell.density) * (0.86 + cell.seed * 0.14);
+          const edge = 1 - smooth(0.173, 0.416, cell.density);
           const filler = cell.seed < clamp(this.options.fillerAmount, 0, 1) * (0.22 + 2.3 * edge);
           if (filler) {
             let mark;
-            if (temperature < 89) mark = cell.seed > 0.22 ? ':' : '.';
-            else if (temperature < 108) mark = cell.seed > 0.25 ? "'" : ':';
+            if (cell.density < 0.184) mark = cell.seed > 0.22 ? ':' : '.';
+            else if (cell.density < 0.286) mark = cell.seed > 0.25 ? "'" : ':';
             else mark = Math.sin(this.time * 1.5 + cell.ny * 8) > 0 ? '/' : '\\';
             ctx.fillText(mark, cell.x, cell.y);
-            if (temperature > 95 && cell.seed < 0.10) {
+            if (cell.density > 0.216 && cell.seed < 0.10) {
               ctx.globalAlpha *= 0.65;
               ctx.fillText('.', cell.x + this.cellW * 0.34, cell.y + this.cellH * 0.17);
             }
           } else {
-            ctx.fillText(String(temperature).padStart(3, '0'), cell.x, cell.y);
+            // Four-digit hot spots fit the existing grid without overlapping neighbours.
+            ctx.fillText(String(temperature).padStart(3, '0'), cell.x, cell.y, this.cellW * 0.94);
           }
         }
         this.drawSparks();
@@ -617,8 +639,8 @@
           if (col < 0 || col >= this.columns || occupied.has(cellKey)) continue;
           const nx = (col + 0.5 - this.columns / 2) / (this.columns * 0.45);
           const ny = row / this.rows;
-          const temperature = Math.round(clamp(lerp(181 + seed * 35, 64, age)
-            + this.extraHeatAt(nx, ny, sparkTime) * 0.45, 55, 899));
+          const temperature = Math.round(clamp(lerp(780 + seed * 150, 380, age)
+            + this.extraHeatAt(nx, ny) * 0.45, 380, 1000) / 5) * 5;
           const alpha = strength * smooth(0, 0.08, age) * (1 - smooth(0.62, 1, age))
             * (1 - smooth(0.01, 0.12, this.heatAt(nx, ny, sparkTime)));
           if (alpha < 0.025) continue;

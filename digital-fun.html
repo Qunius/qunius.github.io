@@ -12,7 +12,7 @@
   <link rel="preload" href="/fonts/ABCArealVariable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/fonts/abc-areal.css">
   <link rel="stylesheet" href="/assets/digital-fun/digital-fun.css?v=project-headings-20261015">
-  <script src="/assets/digital-fun/temperature-fire.js" defer></script>
+  <script src="/assets/digital-fun/temperature-fire.js?v=thermal-20261018" defer></script>
   <script src="/assets/digital-fun/digital-fun.js" defer></script>
 </head>
 <body>
@@ -41,7 +41,7 @@
         </header>
         <div class="experiment">
           <div class="fire-stage">
-            <canvas id="fire" tabindex="0" role="img" aria-label="En interaktiv brasa av temperaturtal ovanpå korslagda ASCII-vedträn." aria-describedby="fire-instructions keyboard-instructions">Din webbläsare behöver stöd för Canvas för att visa brasan.</canvas>
+            <canvas id="fire" tabindex="0" role="img" aria-label="En interaktiv brasa av uppskattade temperaturer i grader Celsius ovanpå korslagda ASCII-vedträn." aria-describedby="fire-instructions keyboard-instructions fire-model-note">Din webbläsare behöver stöd för Canvas för att visa brasan.</canvas>
             <noscript><p class="fallback">Aktivera JavaScript för att leka med brasan.</p></noscript>
             <p class="fallback" id="fire-error" hidden>Brasan kunde inte starta. Prova att ladda om sidan.</p>
           </div>
@@ -60,7 +60,7 @@
                 <p id="keyboard-instructions">Fokusera brasan med Tab. Enter blåser vid basen, Shift + Enter högre upp. Mellanslag pausar. Knappen Ny ved börjar om.</p>
               </details>
             </div>
-            <p class="footnote">Veden brinner långsamt upp och lämnar glöd. Temperaturerna och färgerna är konstnärligt simulerade.</p>
+            <p class="footnote" id="fire-model-note">Talen visar simulerade temperaturer i °C för lågor, vedyta och glöd. Färgerna är en konstnärlig tolkning och förloppet är förkortat.</p>
           </div>
         </div>
       </article>
