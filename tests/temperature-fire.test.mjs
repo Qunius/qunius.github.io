@@ -20,6 +20,34 @@ function fire() {
   return f;
 }
 
+function sparkCanvas(f, width = 620, height = 620) {
+  const marks = [];
+  Object.assign(f, {
+    width, height, fontSize: 9, cellW: 19, cellH: 11,
+    columns: Math.floor(width * 0.85 / 19), rows: Math.floor(height * 0.78 / 11),
+    baseY: height * 0.85,
+    ctx: {
+      fillStyle: '#000000', globalAlpha: 1,
+      fillText(text, x, y) {
+        marks.push({ text, x, y, color: this.fillStyle, alpha: this.globalAlpha });
+      }
+    }
+  });
+  f.buildPalette();
+  return marks;
+}
+
+function smallSpark(mark) {
+  return /^[\x21-\x2f\x3a-\x7e]$/.test(mark.text) && mark.alpha > 0.08;
+}
+
+function nearWhite(color) {
+  const rgb = /^#[0-9a-f]{6}$/i.test(color)
+    ? [1, 3, 5].map(i => parseInt(color.slice(i, i + 2), 16))
+    : color.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)?.slice(1).map(Number);
+  return rgb && Math.min(...rgb) >= 205 && Math.max(...rgb) - Math.min(...rgb) <= 55;
+}
+
 test('active flame readings are in a wood-fire range, and empty air is ambient', () => {
   const f = fire();
   const active = [];
@@ -171,4 +199,57 @@ test('one second of blowing brings out hot highlights, then the added heat fades
     f.updateFuelHeat(1 / 30);
   }
   assert.ok(Math.max(...f.fuelHeat) < 10, 'Hot highlights should settle after release');
+});
+
+test('an ordinary fire throws a restrained number of small sparks with pale hot highlights', () => {
+  const f = fire();
+  const marks = sparkCanvas(f);
+  let paleSparks = 0;
+  for (let frame = 0; frame < 16; frame++) {
+    marks.length = 0;
+    f.time = f.createdAt + frame * 0.25;
+    f.drawSparks();
+    assert.ok(marks.length <= 64, 'The numeric fire should remain primary, without a cloud of confetti');
+    paleSparks += marks.filter(mark => smallSpark(mark) && nearWhite(mark.color)).length;
+  }
+  assert.ok(paleSparks >= 2, 'Normal burning should produce a few visible near-white ASCII flecks');
+});
+
+test('glowing fuel still releases small sparks after the flames have gone', () => {
+  const f = fire();
+  const marks = sparkCanvas(f);
+  f.time = f.createdAt + 160;
+  assert.equal(f.combustionAt(f.time).strength, 0, 'This fixture has no remaining natural flame');
+  assert.ok(f.fuelState(0, 0.5, f.time).ember > 0.5, 'The fuel is still visibly glowing');
+  f.drawSparks();
+  assert.ok(marks.some(smallSpark), 'Glowing embers should keep releasing visible small flecks');
+});
+
+test('cold ash releases no sparks', () => {
+  const f = fire();
+  const marks = sparkCanvas(f);
+  f.time = f.createdAt + 800;
+  f.drawSparks();
+  assert.equal(marks.length, 0, 'Spent cold fuel cannot continue producing sparks');
+});
+
+test('spark drawing stays within the canvas in square and narrow views', () => {
+  for (const [width, height] of [[620, 620], [320, 240]]) {
+    const f = fire();
+    const marks = sparkCanvas(f, width, height);
+    let drawn = 0;
+    for (const elapsed of [0, 0.5, 1, 3, 7, 30, 160]) {
+      marks.length = 0;
+      f.time = f.createdAt + elapsed;
+      f.drawSparks();
+      drawn += marks.length;
+      for (const mark of marks) {
+        assert.ok(Number.isFinite(mark.x) && mark.x >= 0 && mark.x <= width,
+          `Spark x=${mark.x} must fit the ${width}px canvas`);
+        assert.ok(Number.isFinite(mark.y) && mark.y >= 0 && mark.y <= height,
+          `Spark y=${mark.y} must fit the ${height}px canvas`);
+      }
+    }
+    assert.ok(drawn > 0, 'The bounds check must exercise visible sparks');
+  }
 });

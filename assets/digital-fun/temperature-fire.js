@@ -26,13 +26,13 @@
       [300,  '#8c8e91'],
       [440,  '#942536'],
       [540,  '#cb2838'],
-      [650,  '#f13b2d'],
-      [740,  '#ff4430'],
-      [810,  '#ff4b30'],
-      [875,  '#ff6935'],
-      [940,  '#ffad40'],
-      [1000, '#ffe58a'],
-      [1075, '#fff3ce'],
+      [650,  '#fa442f'],
+      [720,  '#ff6c30'],
+      [790,  '#ffab35'],
+      [850,  '#ffdc57'],
+      [925,  '#ffed9c'],
+      [1000, '#fff5d7'],
+      [1075, '#fff9eb'],
       [1120, '#fffaf0'],
       [1150, '#dcecf6']
     ]
@@ -651,45 +651,70 @@
 
       drawSparks() {
         const ctx = this.ctx;
-        // Sparks advance in discrete beats and use the flame's exact text grid.
-        const sparkTime = Math.floor(this.time * 8) / 8;
+        // Small white ash flecks and warm sparks share the text grid, with a
+        // lighter rhythm than the flame. They are decorative marks, not °C readings.
+        const sparkTime = Math.floor(this.time * 14) / 14;
         const left = (this.width - this.columns * this.cellW) / 2;
         const occupied = new Set();
-        for (let i = 0; i < 30 + this.ignitions.length * 3; i++) {
+        const previousFont = ctx.font;
+        ctx.font = `500 ${this.fontSize * 0.80}px ${this.options.fontFamily}`;
+        const paint = (i, source, burst = null) => {
           const seed = hash(i + 61, 17);
-          const life = 3.2 + seed * 4.0;
-          const source = i < 30 ? null : this.ignitions[Math.floor((i - 30) / 3)];
-          const strength = source ? this.fuelState(source.logId, source.u, sparkTime).flame
-            : this.combustionAt(sparkTime).strength;
-          if (strength < 0.025) continue;
-          const sinceLaunch = source ? sparkTime - source.start - 0.8 - ((i - 30) % 3) * 0.7 : 0;
-          if (source && sinceLaunch < 0) continue;
-          const age = source ? fract(sinceLaunch / life) : fract(sparkTime / life + seed * 11);
+          const life = burst ? 1.8 + seed * 0.70 : 3.5 + seed * 3.0;
+          const sinceLaunch = burst ? sparkTime - burst.start - burst.delay
+            : source ? sparkTime - source.start - 0.8 : 0;
+          if ((source || burst) && sinceLaunch < 0) return;
+          const age = burst ? sinceLaunch / life : source ? fract(sinceLaunch / life)
+            : fract(sparkTime / life + seed * 11);
+          if (age >= 1) return;
+          // Sample the fuel at launch: particles keep floating after a flame dies.
+          const launch = Math.max(this.createdAt, sparkTime - age * life);
+          const flame = source ? this.fuelState(source.logId, source.u, launch).flame
+            : this.combustionAt(launch).strength;
+          const ember = source ? this.fuelState(source.logId, source.u, launch).ember
+            : this.logs.reduce((sum, log, logId) => sum + this.fuelState(logId, 0.5, launch).ember, 0) / this.logs.length;
+          const density = clamp(flame + ember * 0.20, 0, 1);
+          if (hash(i + 14, 93) > density) return;
+          const strength = clamp(flame + ember * 0.25, 0, 1) * (burst ? burst.strength : 1);
+          if (strength < 0.025) return;
           const progress = age * age * 0.20 + age * 0.80;
-          const x = (source ? source.x + (seed - 0.5) * 0.08 : (seed - 0.5) * 0.92)
-            + Math.sin(progress * 7 + sparkTime * 0.65 + i) * progress * 0.13;
-          const y = source ? source.y + 0.05 + progress * 0.55 * Math.sqrt(strength)
-            : 0.07 + progress * (0.72 + hash(i, 9) * 0.26) * Math.sqrt(strength);
+          const rootX = burst ? burst.x : source ? source.x : (seed - 0.5) * 1.06;
+          const x = rootX + Math.sin(progress * 7 + sparkTime * 0.65 + i) * progress * 0.24
+            + (seed - 0.5) * progress * progress * 0.26;
+          const y = (source ? source.y : 0) + 0.055 + progress
+            * (burst ? 0.85 : 0.85 + hash(i, 9) * 0.28) * (0.72 + 0.28 * Math.sqrt(flame));
           const wind = this.windAt(x, y, sparkTime);
           const col = Math.round(this.columns / 2 - 0.5 + (x + (wind ? wind.x : 0)) * this.columns * 0.45);
           const row = Math.round((y + (wind ? wind.y : 0)) * this.rows);
           const cellKey = `${col}:${row}`;
-          if (col < 0 || col >= this.columns || occupied.has(cellKey)) continue;
+          const px = left + (col + 0.5) * this.cellW;
+          const py = this.baseY - row * this.cellH;
+          if (col < 0 || col >= this.columns || occupied.has(cellKey)
+            || py < this.fontSize || py > this.height - this.fontSize) return;
           const nx = (col + 0.5 - this.columns / 2) / (this.columns * 0.45);
           const ny = row / this.rows;
           const temperature = Math.round(clamp(lerp(780 + seed * 150, 380, age)
             + this.extraHeatAt(nx, ny) * 0.45, 380, 1000) / 5) * 5;
           const alpha = strength * smooth(0, 0.08, age) * (1 - smooth(0.62, 1, age))
             * (1 - smooth(0.01, 0.12, this.heatAt(nx, ny, sparkTime)));
-          if (alpha < 0.025) continue;
+          if (alpha < 0.04) return;
           occupied.add(cellKey);
-          ctx.globalAlpha = alpha * 0.78;
-          ctx.fillStyle = this.colors[temperature];
-          const mark = seed > 0.83 ? String(temperature).padStart(3, '0')
-            : age < 0.38 ? '*' : age < 0.69 ? "'" : '.';
-          ctx.fillText(mark, left + (col + 0.5) * this.cellW,
-            this.baseY - row * this.cellH);
+          ctx.globalAlpha = alpha * (0.72 + seed * 0.24);
+          const pale = flame < 0.10 || hash(i + 91, 37) < (burst ? 0.65 : 0.42);
+          ctx.fillStyle = pale ? age < 0.60 ? '#fff8e8' : '#e3e5e3' : this.colors[temperature];
+          const mark = age < 0.30 && seed > 0.5 ? '*' : seed < 0.3 ? "'" : seed > 0.86 ? '+' : '.';
+          ctx.fillText(mark, px, py);
+        };
+        for (let i = 0; i < 48 + this.ignitions.length * 3; i++) {
+          const source = i < 48 ? null : this.ignitions[Math.floor((i - 48) / 3)];
+          paint(i, source);
         }
+        // Blowing shakes a few additional flecks free, starting at the fuel bed.
+        for (const puff of this.heatPuffs) {
+          for (let j = 0; j < 2; j++) paint(150 + j + Math.floor(puff.start * 11) % 83,
+            null, { ...puff, delay: j * 0.12 });
+        }
+        ctx.font = previousFont;
       }
 
       tick(now) {
