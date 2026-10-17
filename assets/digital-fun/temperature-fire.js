@@ -15,8 +15,8 @@
     fillerAmount: 0.27,
     speed: 1,
     maxFPS: 30,
-    heatingRate: 45,  // Extra modelled degrees per second with sustained air.
-    coolingRate: 18,
+    heatingRate: 180, // A short hold brings out hot highlights; the total boost stays bounded.
+    coolingRate: 60,
     spreadSpeed: 0.022, // Längd per sekund i brasans normaliserade koordinater.
     charSeconds: 28,    // Tid från antändning till helt förkolnad bark.
     burnSeconds: 110,   // Brinntid för en antänd del; spridningen tar extra tid.

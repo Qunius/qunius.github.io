@@ -5,11 +5,11 @@ import vm from 'node:vm';
 
 // Exercise the real artwork model without a browser animation loop.
 const window = {};
-vm.runInNewContext(readFileSync(new URL('../assets/digital-fun/temperature-fire.js', import.meta.url), 'utf8'), { window });
+const defaults = vm.runInNewContext(readFileSync(new URL('../assets/digital-fun/temperature-fire.js', import.meta.url), 'utf8') + '\nSETTINGS;', { window });
 function fire() {
   const f = Object.create(window.TemperatureFire.prototype);
   Object.assign(f, {
-    options: { intensity: 1, burnSeconds: 110, charSeconds: 28, spreadSpeed: 0.022, heatingRate: 45, coolingRate: 18 },
+    options: { ...defaults },
     createdAt: 17.3, time: 17.3, destroyed: false, ignitions: [], gusts: [], heatPuffs: [],
     spreadCache: { time: NaN, sources: [] }, combustionCache: { time: NaN },
     logs: [{ x: -0.83, y: -0.080, endX: 0.57, endY: 0.010, radius: 0.034 },
@@ -149,4 +149,26 @@ test('a rising pulse adds limited temperature only while it passes', () => {
   const expired = f.temperatureAt(0, 0.10, f.time + 3, 0.6);
   f.heatPuffs = [];
   assert.equal(expired, f.temperatureAt(0, 0.10, f.time + 3, 0.6));
+});
+
+test('one second of blowing brings out hot highlights, then the added heat fades promptly', () => {
+  const f = fire();
+  Object.assign(f, { width: 1000, columns: 100, cellW: 10, rows: 100, cellH: 10, baseY: 1000 });
+  for (let frame = 0; frame < 30; frame++) {
+    if (frame % 5 === 0) f.gustAt(500, 960, false);
+    f.time += 1 / 30;
+    f.updateFuelHeat(1 / 30);
+  }
+  assert.ok(Math.max(...f.fuelHeat) >= 130, 'A short hold should approach the bounded heating response');
+  assert.ok(Math.max(...f.fuelHeat) <= 150);
+  let hottest = 0;
+  for (let y = 0.04; y <= 0.4; y += 0.02) {
+    for (let x = -0.25; x <= 0.25; x += 0.02) hottest = Math.max(hottest, f.temperatureAt(x, y, f.time));
+  }
+  assert.ok(hottest >= 1130, 'A short hold should reach the pale blue highlight range');
+  for (let frame = 0; frame < 100; frame++) {
+    f.time += 1 / 30;
+    f.updateFuelHeat(1 / 30);
+  }
+  assert.ok(Math.max(...f.fuelHeat) < 10, 'Hot highlights should settle after release');
 });
