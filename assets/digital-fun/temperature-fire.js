@@ -276,7 +276,7 @@
               + pulse * 16 + Math.min(80, this.extraHeatAt(mark.nx, mark.ny)), 55, 240));
             ctx.fillStyle = this.colors[temperature];
             ctx.globalAlpha = emberAlpha;
-            const glyph = mark.numeric ? String(temperature).padStart(3, '0')
+            const glyph = mark.numeric ? String(this.celsiusReading(temperature, 'ember')).padStart(3, '0')
               : mark.seed < 0.24 ? '*' : mark.seed < 0.63 ? ':' : '.';
             ctx.fillText(glyph, mark.x, mark.y);
             continue;
@@ -295,7 +295,7 @@
           ctx.globalAlpha = (mark.cap || mark.edge ? 0.90 : 0.66 + glow * 0.30) * bodyAlpha;
           const glyph = !mark.edge && !mark.cap && char > 0.35 + mark.seed * 0.30
             ? ['#', ':', '%'][Math.floor(mark.seed * 3)] : mark.mark;
-          ctx.fillText(mark.numeric ? String(temperature).padStart(3, '0') : glyph, mark.x, mark.y);
+          ctx.fillText(mark.numeric ? String(this.celsiusReading(temperature, 'wood')).padStart(3, '0') : glyph, mark.x, mark.y);
         }
       }
 
@@ -505,6 +505,29 @@
         return heat * Math.exp(-Math.pow((y - 0.025) / 0.20, 2) * 1.5);
       }
 
+      celsiusReading(visualTemperature, material = 'flame') {
+        // Calibrate only the printed estimates. The original live field, palette,
+        // motion and interactions remain independent of these Celsius labels.
+        // Representative flame range: NBSIR 80-2054 vol. I, table 6-8.
+        const heat = clamp((visualTemperature - 55) / 185, 0, 1);
+        const boost = 1 - Math.exp(-Math.max(0, visualTemperature - 240) / 160);
+        let reading, maximum;
+        if (material === 'wood') {
+          reading = 20 + Math.max(0, visualTemperature - 80) * 3;
+          maximum = 800;
+        } else if (material === 'ember') {
+          reading = 20 + 720 * Math.pow(heat, 0.35);
+          maximum = 800;
+        } else if (material === 'spark') {
+          reading = 20 + 880 * Math.pow(heat, 0.45) + 100 * boost;
+          maximum = 1000;
+        } else {
+          reading = 20 + 980 * Math.pow(heat, 0.35) + 150 * boost;
+          maximum = 1150;
+        }
+        return Math.round(clamp(reading, 20, maximum) / 5) * 5;
+      }
+
       temperatureAt(x, y, t) {
         const heat = this.heatAt(x, y, t);
         const normal = 55 + Math.pow(heat, 0.64) * 185;
@@ -566,7 +589,7 @@
             : lerp(cell.temperature, target, response);
           const temperature = Math.round(cell.temperature);
           if (temperature < 72) continue;
-          // Color is chosen from the actual displayed integer, never a separate random value.
+          // Keep the live palette; calibrate only the printed Celsius estimate.
           ctx.fillStyle = this.colors[temperature];
           ctx.globalAlpha = smooth(69, 112, cell.temperature) * (0.86 + cell.seed * 0.14);
           const edge = 1 - smooth(87, 132, temperature);
@@ -582,7 +605,9 @@
               ctx.fillText('.', cell.x + this.cellW * 0.34, cell.y + this.cellH * 0.17);
             }
           } else {
-            ctx.fillText(String(temperature).padStart(3, '0'), cell.x, cell.y);
+            const label = String(this.celsiusReading(temperature)).padStart(3, '0');
+            if (label.length > 3) ctx.fillText(label, cell.x, cell.y, this.cellW * 0.95);
+            else ctx.fillText(label, cell.x, cell.y);
           }
         }
         this.drawSparks();
@@ -625,10 +650,12 @@
           occupied.add(cellKey);
           ctx.globalAlpha = alpha * 0.78;
           ctx.fillStyle = this.colors[temperature];
-          const mark = seed > 0.83 ? String(temperature).padStart(3, '0')
+          const mark = seed > 0.83 ? String(this.celsiusReading(temperature, 'spark')).padStart(3, '0')
             : age < 0.38 ? '*' : age < 0.69 ? "'" : '.';
-          ctx.fillText(mark, left + (col + 0.5) * this.cellW,
-            this.baseY - row * this.cellH);
+          const px = left + (col + 0.5) * this.cellW;
+          const py = this.baseY - row * this.cellH;
+          if (mark.length > 3) ctx.fillText(mark, px, py, this.cellW * 0.95);
+          else ctx.fillText(mark, px, py);
         }
       }
 
