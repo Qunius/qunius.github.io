@@ -33,9 +33,16 @@ const { code } = transformSync(read('cases-src/wingspan.jsx'), {
 });
 bundle = bundle.slice(0, start) + code + bundle.slice(end);
 
-const from = 'context:"Grupprojekt med designförslag"';
-if (!bundle.includes(from)) throw new Error('Missing overview string');
-bundle = bundle.replace(from, 'context:"Grupprojekt med verklig kund"');
+for (const [from, to] of [
+  ['context:"Grupprojekt med designförslag"', 'context:"Grupprojekt med verklig kund"'],
+  ['"UI · Visuell identitet"', '"UI och visuell identitet"'],
+  ['"Etik i design · UX/UI"', '"Etik i design och UX/UI"'],
+  ['"Kursprojekt / 2026 · 1,5 vecka"', '"Kursprojekt / 2026 / 1,5 vecka"'],
+  ['"Pavel Li · Portfolio"', '"Pavel Li / Portfolio"'],
+]) {
+  if (!bundle.includes(from)) throw new Error(`Missing string: ${from}`);
+  bundle = bundle.replace(from, to);
+}
 
 const css = transformSync(read('cases-src/wingspan.css'), { loader: 'css', minify: true }).code;
 const jsName = `assets/index-${hash(bundle)}.js`;

@@ -1,6 +1,6 @@
 /* Wingspan case. Compiled by build.mjs and spliced into the published bundle.
    `c` (jsx runtime), `Ne` (image with lightbox) and `ke` (arrow) come from the
-   surrounding bundle. Design source: Figma frame "Wingspan · Ny version · 05 nov". */
+   surrounding bundle. Design source: Figma frame "Wingspan, ny version, 5 nov". */
 
 const wxh = (t, p, ...k) => {
   const o = { ...(p || {}) };
@@ -122,7 +122,7 @@ function Cg() {
       </header>
 
       <WxBleed src="mockup.webp" alt="Vårt designförslag på en bärbar dator och en surfplatta på ett bord i varmt ljus. Startsidan med rubriken Förstå människorna. Stärk organisationen. och produktvyn Organisationsöversikt." />
-      <div className="wx-wrap"><WxCap left="Vårt designförslag" right="Skärmarna är från prototypen. Miljön är AI-genererad." /></div>
+      <div className="wx-wrap"><WxCap left="Vårt designförslag" right="Skärmarna är från prototypen." /></div>
 
       <section className="wx-wrap wx-section" aria-labelledby="wingspan-summary">
         <div className="wx-row">
@@ -215,7 +215,7 @@ function Cg() {
       </section>
 
       <section className="wx-wrap wx-chapter" aria-labelledby="wingspan-ch1">
-        <WxHead label="01 · Erbjudandet" right="Prioritet: Förklara erbjudandet" />
+        <WxHead label="01 Erbjudandet" right="Prioritet: Förklara erbjudandet" />
         <div className="wx-row">
           <h4 id="wingspan-ch1">Säg vad<br />tjänsten gör</h4>
           <div className="wx-main">
@@ -235,10 +235,10 @@ function Cg() {
 
       <div className="wx-spacer" />
       <WxBleed src="produkt.webp" alt="En person använder prototypen på en bärbar dator. Skärmen visar flikarna Mät, Förstå och Förbättra bredvid produktvyn Organisationsöversikt." />
-      <div className="wx-wrap"><WxCap left="Vårt designförslag" right="Skärmen är från prototypen. Miljön är AI-genererad." /></div>
+      <div className="wx-wrap"><WxCap left="Vårt designförslag" right="Skärmen är från prototypen." /></div>
 
       <section className="wx-wrap wx-chapter wx-chapter--tight" aria-labelledby="wingspan-ch2">
-        <WxHead label="02 · Produkten · Min del" right="Prioritet: Visa produkten i användning" />
+        <WxHead label="02 Produkten / Min del" right="Prioritet: Visa produkten i användning" />
         <div className="wx-row">
           <h4 id="wingspan-ch2">Text och produktvy tillsammans</h4>
           <div className="wx-main">
@@ -257,7 +257,7 @@ function Cg() {
       </section>
 
       <section className="wx-wrap wx-chapter" aria-labelledby="wingspan-ch3">
-        <WxHead label="03 · Paketen" right="Prioritet: Gör paketen jämförbara" />
+        <WxHead label="03 Paketen" right="Prioritet: Gör paketen jämförbara" />
         <div className="wx-row">
           <h4 id="wingspan-ch3">Nio knappar<br />blev tre</h4>
           <div className="wx-main">
@@ -284,7 +284,7 @@ function Cg() {
       </section>
 
       <section className="wx-wrap wx-chapter" aria-labelledby="wingspan-after">
-        <WxHead label="04 · Efteråt" right="Observerat 5 november 2026" />
+        <WxHead label="04 Efteråt" right="Observerat 5 november 2026" />
         <div className="wx-row">
           <h4 id="wingspan-after">Sedan ändrades wingspan.se</h4>
           <div className="wx-main">
