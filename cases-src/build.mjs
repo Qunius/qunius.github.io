@@ -39,6 +39,11 @@ for (const [from, to] of [
   ['"Etik i design · UX/UI"', '"Etik i design och UX/UI"'],
   ['"Kursprojekt / 2026 · 1,5 vecka"', '"Kursprojekt / 2026 / 1,5 vecka"'],
   ['"Pavel Li · Portfolio"', '"Pavel Li / Portfolio"'],
+  ['"Samma uttryck på mobil och tablet. Produktbilderna är AI-genererade."', '"Samma uttryck på mobil och tablet."'],
+  ['"Kampanjkoncept i en tänkt tunnelbanemiljö. AI-genererad mockup, inte en genomförd reklamkampanj."', '"Kampanjkoncept i en tänkt tunnelbanemiljö, inte en genomförd reklamkampanj."'],
+  ['"Tre AI-genererade kampanjkoncept från presentationen. Priser och leveranstider ingår i konceptet."', '"Tre kampanjkoncept från presentationen. Priser och leveranstider ingår i konceptet."'],
+  ['"Glaset ramar in det förflutna innan besökaren går in i långhuset. Gestaltningen är en del av konceptet, med AI-genererade miljöer."', '"Glaset ramar in det förflutna innan besökaren går in i långhuset. Gestaltningen är en del av konceptet."'],
+  ['"”Läs mer” öppnar en sidopanel för den som vill fördjupa sig. Valet ligger kvar bakom panelen. Miljöer och figurer är AI-genererade."', '"”Läs mer” öppnar en sidopanel för den som vill fördjupa sig. Valet ligger kvar bakom panelen."'],
 ]) {
   if (!bundle.includes(from)) throw new Error(`Missing string: ${from}`);
   bundle = bundle.replace(from, to);
