@@ -1,5 +1,19 @@
 /* Wingspan case. Loaded after the page stylesheets. */
 
+/* Every case fills the whole window. The toolbar and Esc close it. */
+.case-panel {
+  --dismiss-width: 0px;
+}
+
+.case-panel-sheet {
+  width: 100%;
+  box-shadow: none;
+}
+
+.case-panel-dismiss {
+  display: none;
+}
+
 .case-panel:has(.wx) {
   --paper: #e9e9e7;
   --rule: #c7c8c3;
