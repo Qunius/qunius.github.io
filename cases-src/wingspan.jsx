@@ -266,12 +266,12 @@ function Cg() {
               <p>Vi behöll paketkorten sida vid sida, men lät behovet komma före paketnamnet: kartlägga nuläget, följa utvecklingen eller anpassa upplägget.</p>
               <p>Varje kort ger en första överblick, ett kontaktval och länken ”Se vad som ingår”. Besökaren kan orientera sig innan den går in på detaljerna.</p>
             </WxBody>
-            <dl className="wx-tradeoff"><WxFact label="Avvägningen">Färre kontaktval kan tappa den som redan vet att den vill ha en offert. Vi valde tydlighet för den som fortfarande jämför.</WxFact></dl>
+            <dl className="wx-tradeoff"><WxFact label="Avvägningen">Vägen var redan en och samma, så vi tog inte bort något val. Risken är att den som letar efter ordet offert inte känner igen sig. Vi valde tydlighet för den som fortfarande jämför.</WxFact></dl>
           </div>
         </div>
         <div className="wx-pair">
-          <WxFig title="Nio knappar" meta="Wingspans webbplats, 24 september 2026" note="Tre kontaktval på varje kort: Boka möte, Kontakta oss och Få offert." kind="cards">
-            <WxCards label="Tre paketkort med tre knappar var: Boka möte, Kontakta oss och Få offert." cards={wxBefore} />
+          <WxFig title="Nio knappar" meta="Wingspans webbplats, 24 september 2026" note="Tre kontaktval på varje kort, men alla nio knappar ledde till samma sida." kind="cards">
+            <WxCards label="Tre paketkort med tre knappar var: Boka möte, Kontakta oss och Få offert. Alla nio ledde till samma sida." cards={wxBefore} />
           </WxFig>
           <WxFig title="Tre knappar" meta="Vårt designförslag" note="Behovet kommer före paketnamnet. Ett kontaktval och en separat länk." kind="cards">
             <WxCards label="Tre paketkort med en knapp var och länken Se vad som ingår." cards={wxAfter} />

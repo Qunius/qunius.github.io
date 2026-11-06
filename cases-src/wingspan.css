@@ -507,7 +507,7 @@
 }
 
 .wx-card b {
-  font-size: 20px;
+  font-size: clamp(14px, 1.75cqw, 20px);
   font-weight: 400;
   line-height: 1.2;
   letter-spacing: -.025em;
@@ -642,6 +642,19 @@
   .wx-facts,
   .wx-problems {
     gap: 24px;
+  }
+
+  .wx-mat--cards {
+    padding: 12px;
+  }
+
+  .wx-cards {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .wx-card {
+    padding: 14px 8px;
   }
 }
 
