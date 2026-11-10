@@ -131,7 +131,7 @@ function Cg() {
             <div><dt>Frågan</dt><dd>Förstår användaren vad Wingspan erbjuder inom 30 sekunder?</dd></div>
             <div><dt>Svaret</dt><dd>Flera hade svårt att förklara tjänsten. Språket, produkten och paketen återkom som problem.</dd></div>
             <div><dt>Förslaget</dt><dd>Ett webbkoncept som säger vad tjänsten gör, visar produkten och gör paketen lättare att jämföra.</dd></div>
-            <div><dt>Efteråt</dt><dd>Wingspan byggde vidare på vårt förslag i Lovable. Det blev inte exakt som vi hade tänkt oss, men mycket av vår input finns nu på wingspan.se.</dd></div>
+            <div><dt>Efteråt</dt><dd>Den senare versionen av wingspan.se har likheter med vårt förslag, bland annat i produktvyn och paketkorten. Jämförelsen nedan visar vad jag observerade.</dd></div>
           </dl>
         </div>
         <dl className="wx-facts">
@@ -286,11 +286,11 @@ function Cg() {
       <section className="wx-wrap wx-chapter" aria-labelledby="wingspan-after">
         <WxHead label="04 Efteråt" right="Observerat 5 november 2026" />
         <div className="wx-row">
-          <h4 id="wingspan-after">Wingspan tog vårt förslag vidare</h4>
+          <h4 id="wingspan-after">Webbplatsen efter projektet</h4>
           <div className="wx-main">
             <WxBody>
-              <p>Wingspan tog med sig mycket av vår input när de byggde vidare på webbplatsen i Lovable. Det syns på startsidan, i produktmodulen och i paketkorten.</p>
-              <p>Det blev inte exakt som vi hade tänkt oss. Wingspan behöll sin rubrik och sin målgrupp, men sättet att förklara tjänsten kommer från vårt arbete.</p>
+              <p>I skärmbilderna från den 5 november 2026 syns likheter med vårt designförslag: en produktvy bredvid texten, ett kontaktval per paket och en bokningsknapp i menyn.</p>
+              <p>Wingspan behöll sin rubrik och sitt fokus på ledningsgrupper. Jag kan inte avgöra hur mycket av den senare versionen som kommer från vårt arbete.</p>
             </WxBody>
           </div>
         </div>
@@ -318,8 +318,8 @@ function Cg() {
           </div>
         </div>
         <dl className="wx-facts wx-facts--two">
-          <WxFact label="Från vårt förslag">Flikar bredvid en produktvy. Rubriken Organisationsöversikt. Ett kontaktval per paket, länken Se vad som ingår och en bokningsknapp i menyn.</WxFact>
-          <WxFact label="Behöll Wingspan">Rubriken Mät det som faktiskt driver affärsresultaten. Ledningsgrupper som målgrupp. Egna flikar: Översikt, Faktorer och Utveckling.</WxFact>
+          <WxFact label="Likheter med vårt förslag">Flikar bredvid en produktvy. Rubriken Organisationsöversikt. Ett kontaktval per paket, länken Se vad som ingår och en bokningsknapp i menyn.</WxFact>
+          <WxFact label="I den publicerade versionen">Rubriken Mät det som faktiskt driver affärsresultaten. Ledningsgrupper som målgrupp. Flikarna Översikt, Faktorer och Utveckling.</WxFact>
         </dl>
       </section>
 
@@ -343,7 +343,7 @@ function Cg() {
         <div className="wx-evidence">
           <WxMarker>Bevisläge</WxMarker>
           <dl className="wx-facts">
-            <WxFact label="Visat">Fem personer testade den ursprungliga webbplatsen, tre ur målgruppen. Språket, produkten och paketen återkom som problem. Wingspan tog sedan med sig mycket av vår input.</WxFact>
+            <WxFact label="Visat">Fem personer testade den ursprungliga webbplatsen, tre ur målgruppen. Språket, produkten och paketen återkom som problem. Den senare webbplatsen har likheter med vårt förslag.</WxFact>
             <WxFact label="Antaget">Att en produktvy bredvid texten gör tjänsten lättare att förklara, och att färre kontaktval gör det lättare att välja paket.</WxFact>
             <WxFact label="Inte testat">Vårt förslag har inte testats med användare. Jag vet inte hur Wingspans ändringar har påverkat bokade möten.</WxFact>
           </dl>

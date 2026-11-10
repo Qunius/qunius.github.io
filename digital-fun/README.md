@@ -1,26 +1,37 @@
 # Digital fun
 
-An open-ended home for Pavel's interactive experiments: `/digital-fun.html`.
-The portfolio links here from the main navigation and “Annat roligt”.
+Pavel Li's interactive experiments, published at `/digital-fun.html` and linked
+from the portfolio's “Annat roligt” section.
+
+## Structure
 
 Each experiment is an `<article class="project-entry">` in `digital-fun.html`.
-Future pieces can have their own markup, colours, media and scripts; they do
-not need to use Canvas or ASCII. Add their styles under `assets/digital-fun/`.
-Only load their animation while visible, respect reduced motion, and provide
-keyboard controls for interactive pieces.
+Styles, scripts and media live under `assets/digital-fun/`. Experiments can use
+their own visual language and implementation.
 
-The first piece is Temperaturbrasa. `temperature-fire.js` contains the original
-standalone artwork's engine and settings, including finite fuel. `digital-fun.js`
-owns page controls (pause/new wood) and scroll/history lifecycle. The canvas is
-transparent; the stage provides the dark background. No dependencies or build
-step are needed for this page. Scripts stay external to retain the site's CSP.
+Temperaturbrasa uses `temperature-fire.js` for its fire simulation and finite
+fuel. `digital-fun.js` handles pause, new wood and the page's scroll and history
+lifecycle. The canvas is transparent, with a dark background supplied by the
+stage. This page has no external dependencies or build step; scripts remain
+external to preserve the site's Content Security Policy.
 
-The current portfolio homepage is supplied as a built bundle. When changing it,
-update the entry point in `index.html` to a new content-hashed filename. Retain
-the existing photojournal, case scrolling and typography. Local tests:
-`node --test tests/*.test.mjs`.
+## Development
 
-Regn mot rutan is unpublished at Pavel's request (2026-10-16).
-The complete work is preserved on branch `draft/regn-mot-rutan-2026-10-16`
-at commit `751b046f4578e7145f29d25f2a68d8c028aa2158`.
-Do not publish it again unless Pavel explicitly asks.
+Animations run only while visible. Interactive pieces support keyboard input
+and respect reduced-motion preferences. Changes should preserve the existing
+photojournal, case scrolling and typography.
+
+Run the regression checks from the repository root:
+
+```sh
+node --test tests/*.test.mjs
+```
+
+See the root README for the portfolio homepage's build workflow.
+
+## Unpublished work
+
+Regn mot rutan has been unpublished since 16 October 2026. The complete work is
+preserved on `draft/regn-mot-rutan-2026-10-16` at commit
+`751b046f4578e7145f29d25f2a68d8c028aa2158` and is not part of the live portfolio.
+Project policy: publication requires Pavel's explicit approval.
