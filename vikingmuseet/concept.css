@@ -1,0 +1,26 @@
+/* The notice sits below the existing header without changing viewport-based scenes. */
+.concept-notice {
+  position: absolute;
+  z-index: 20;
+  top: var(--header-h);
+  inset-inline: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: .15rem .75rem;
+  padding: .5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(250, 249, 245, .96);
+  color: var(--ink);
+  font: 400 .75rem/1.5 var(--sans);
+  text-align: center;
+}
+
+.concept-notice strong {
+  font-weight: 700;
+}
+
+@media print {
+  .concept-notice { display: none; }
+}
