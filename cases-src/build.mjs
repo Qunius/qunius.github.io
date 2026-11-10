@@ -3,7 +3,8 @@
 //
 //   npm i --no-save esbuild && node cases-src/build.mjs
 //
-// The base file below is kept untouched. Earlier bundles stay in assets/ for rollback.
+// The base file below is kept untouched. Earlier bundles are not kept in assets/;
+// roll back through git history. Delete the bundle this run replaces.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
